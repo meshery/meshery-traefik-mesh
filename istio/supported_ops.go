@@ -14,7 +14,7 @@
 
 package istio
 
-import "github.com/layer5io/meshery-istio/meshes"
+import "github.com/layer5io/meshery-maesh/meshes"
 
 type supportedOperation struct {
 	// a friendly name

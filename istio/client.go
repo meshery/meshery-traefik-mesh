@@ -17,7 +17,7 @@ package istio
 import (
 	"time"
 
-	"github.com/layer5io/meshery-istio/meshes"
+	"github.com/layer5io/meshery-maesh/meshes"
 	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"

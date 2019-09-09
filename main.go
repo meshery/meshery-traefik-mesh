@@ -25,8 +25,8 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/layer5io/meshery-istio/istio"
-	mesh "github.com/layer5io/meshery-istio/meshes"
+	"github.com/layer5io/meshery-maesh/istio"
+	mesh "github.com/layer5io/meshery-maesh/meshes"
 )
 
 var (

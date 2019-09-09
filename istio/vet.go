@@ -15,7 +15,7 @@ import (
 	"github.com/aspenmesh/istio-vet/pkg/vetter/podsinmesh"
 	"github.com/aspenmesh/istio-vet/pkg/vetter/serviceassociation"
 	"github.com/aspenmesh/istio-vet/pkg/vetter/serviceportprefix"
-	"github.com/layer5io/meshery-istio/meshes"
+	"github.com/layer5io/meshery-maesh/meshes"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/informers"

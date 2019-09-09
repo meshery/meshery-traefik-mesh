@@ -1,15 +1,15 @@
 <img align="right" src="https://layer5.io/assets/images/cube-sh-small.png" />
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/layer5/meshery-istio.svg)](https://hub.docker.com/r/layer5/meshery-istio)
-[![Go Report Card](https://goreportcard.com/badge/github.com/layer5io/meshery-istio)](https://goreportcard.com/report/github.com/layer5io/meshery-istio)
-[![Build Status](https://travis-ci.com/layer5io/meshery-istio.svg?branch=master)](https://travis-ci.com/layer5io/meshery-istio)
-![GitHub](https://img.shields.io/github/license/layer5io/meshery-istio.svg)
-![GitHub issues by-label](https://img.shields.io/github/issues/layer5io/meshery-istio/help%20wanted.svg)
+[![Docker Pulls](https://img.shields.io/docker/pulls/layer5/meshery-maesh.svg)](https://hub.docker.com/r/layer5/meshery-maesh)
+[![Go Report Card](https://goreportcard.com/badge/github.com/layer5io/meshery-maesh)](https://goreportcard.com/report/github.com/layer5io/meshery-maesh)
+[![Build Status](https://travis-ci.com/layer5io/meshery-maesh.svg?branch=master)](https://travis-ci.com/layer5io/meshery-maesh)
+![GitHub](https://img.shields.io/github/license/layer5io/meshery-maesh.svg)
+![GitHub issues by-label](https://img.shields.io/github/issues/layer5io/meshery-maesh/help%20wanted.svg)
 ![Website](https://img.shields.io/website/https/layer5.io/meshery.svg)
 ![Twitter Follow](https://img.shields.io/twitter/follow/layer5.svg?label=Follow&style=social)
 [![Slack](https://img.shields.io/badge/slack-380-lightgrey)](http://slack.layer5.io)
 
-# meshery-istio
+# meshery-maesh
 Meshery Adapter for Istio
 
 ><p align="center"><i>If you’re using Meshery or if you like the project, please ★ star this repository to show your support! 🤩</i></p>

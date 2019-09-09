@@ -26,7 +26,7 @@ import (
 	"time"
 
 	"github.com/ghodss/yaml"
-	"github.com/layer5io/meshery-istio/meshes"
+	"github.com/layer5io/meshery-maesh/meshes"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
