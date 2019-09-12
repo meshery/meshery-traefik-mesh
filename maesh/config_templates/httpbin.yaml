@@ -31,13 +31,13 @@ spec:
         ports:
         - containerPort: 80
 ---
-apiVersion: networking.istio.io/v1alpha3
+apiVersion: networking.maesh.io/v1alpha3
 kind: Gateway
 metadata:
   name: httpbin-gateway
 spec:
   selector:
-    istio: ingressgateway
+    maesh: ingressgateway
   servers:
   - port:
       number: 80
@@ -46,7 +46,7 @@ spec:
     hosts:
     - "*"
 ---
-apiVersion: networking.istio.io/v1alpha3
+apiVersion: networking.maesh.io/v1alpha3
 kind: VirtualService
 metadata:
   name: httpbin

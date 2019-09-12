@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package istio
+package maesh
 
 import "github.com/layer5io/meshery-maesh/meshes"
 
@@ -26,9 +26,9 @@ type supportedOperation struct {
 
 const (
 	customOpCommand         = "custom"
-	runVet                  = "istio_vet"
-	installIstioCommand     = "istio_install"
-	installmTLSIstioCommand = "istio_mtls_install"
+	runVet                  = "maesh_vet"
+	installMaeshCommand     = "maesh_install"
+	installmTLSMaeshCommand = "maesh_mtls_install"
 	installBookInfoCommand  = "install_book_info"
 	cbCommand               = "cb1"
 	installSMI              = "install_smi"
@@ -36,25 +36,25 @@ const (
 )
 
 var supportedOps = map[string]supportedOperation{
-	installIstioCommand: {
-		name: "Latest Istio without mTLS",
-		// templateName: "install_istio.tmpl",
+	installMaeshCommand: {
+		name: "Latest Maesh without mTLS",
+		// templateName: "install_maesh.tmpl",
 		opType: meshes.OpCategory_INSTALL,
 	},
-	installmTLSIstioCommand: {
-		name:   "Latest Istio with mTLS",
+	installmTLSMaeshCommand: {
+		name:   "Latest Maesh with mTLS",
 		opType: meshes.OpCategory_INSTALL,
 	},
 	installBookInfoCommand: {
 		name: "Book Info Application",
-		// templateName: "install_istio.tmpl",
+		// templateName: "install_maesh.tmpl",
 		opType: meshes.OpCategory_SAMPLE_APPLICATION,
 	},
 	runVet: {
-		name:   "Run istio-vet",
+		name:   "Run maesh-vet",
 		opType: meshes.OpCategory_VALIDATE,
-		// templateName: "istio_vet.tmpl",
-		// appLabel:     "istio-vet",
+		// templateName: "maesh_vet.tmpl",
+		// appLabel:     "maesh-vet",
 		// returnLogs:   true,
 	},
 	cbCommand: {
@@ -63,7 +63,7 @@ var supportedOps = map[string]supportedOperation{
 		templateName: "circuit_breaking.tmpl",
 	},
 	installSMI: {
-		name:   "Service Mesh Interface (SMI) Istio Adapter",
+		name:   "Service Mesh Interface (SMI) Maesh Adapter",
 		opType: meshes.OpCategory_INSTALL,
 	},
 	installHTTPBin: {
