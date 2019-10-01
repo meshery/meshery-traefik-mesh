@@ -10,7 +10,7 @@
 [![Slack](https://img.shields.io/badge/slack-380-lightgrey)](http://slack.layer5.io)
 
 # meshery-maesh
-Meshery Adapter for Istio
+Meshery Adapter for Maesh
 
 ><p align="center"><i>If you’re using Meshery or if you like the project, please ★ star this repository to show your support! 🤩</i></p>
 
