@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package istio
+package maesh
 
 import (
 	"time"
@@ -28,16 +28,16 @@ import (
 	"github.com/ghodss/yaml"
 )
 
-// IstioClient represents an Istio client in Meshery
-type IstioClient struct {
+// MaeshClient represents an Maesh client in Meshery
+type MaeshClient struct {
 	config           *rest.Config
 	k8sClientset     *kubernetes.Clientset
 	k8sDynamicClient dynamic.Interface
 	eventChan        chan *meshes.EventsResponse
 
-	istioReleaseVersion     string
-	istioReleaseDownloadURL string
-	istioReleaseUpdatedAt   time.Time
+	maeshReleaseVersion     string
+	maeshReleaseDownloadURL string
+	maeshReleaseUpdatedAt   time.Time
 }
 
 func configClient(kubeconfig []byte, contextName string) (*rest.Config, error) {
@@ -55,9 +55,9 @@ func configClient(kubeconfig []byte, contextName string) (*rest.Config, error) {
 	return rest.InClusterConfig()
 }
 
-func newClient(kubeconfig []byte, contextName string) (*IstioClient, error) {
+func newClient(kubeconfig []byte, contextName string) (*MaeshClient, error) {
 	kubeconfig = monkeyPatchingToSupportInsecureConn(kubeconfig)
-	client := IstioClient{}
+	client := MaeshClient{}
 	config, err := configClient(kubeconfig, contextName)
 	if err != nil {
 		return nil, err
