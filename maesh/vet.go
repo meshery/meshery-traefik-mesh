@@ -1,5 +1,5 @@
 package maesh
 
-func (iClient *MaeshClient) runVet() error {
+func (iClient *Client) runVet() error {
 	return nil
 }

@@ -21,7 +21,7 @@ import (
 
 const (
 	repoURL     = "https://api.github.com/repos/containous/maesh/releases/latest"
-	URLSuffix   = "-linux.tar.gz"
+	urlSuffix   = "-linux.tar.gz"
 	crdPattern  = "crd(.*)yaml"
 	cachePeriod = 1 * time.Hour
 )
@@ -36,20 +36,20 @@ var (
 	bookInfoGatewayInstallFile = path.Join(basePath, "samples/bookinfo/networking/bookinfo-gateway.yaml")
 	crdFolder                  = path.Join(basePath, "install/kubernetes/helm/maesh-init/files/")
 )
-
+// APIInfo is used to store individual response from GitHub release call
 type APIInfo struct {
 	TagName    string   `json:"tag_name,omitempty"`
 	PreRelease bool     `json:"prerelease,omitempty"`
 	Assets     []*Asset `json:"assets,omitempty"`
 }
-
+// Asset is used to store the individual asset data as part of a release
 type Asset struct {
 	Name        string `json:"name,omitempty"`
 	State       string `json:"state,omitempty"`
 	DownloadURL string `json:"browser_download_url,omitempty"`
 }
 
-func (iClient *MaeshClient) getLatestReleaseURL() error {
+func (iClient *Client) getLatestReleaseURL() error {
 	if iClient.maeshReleaseDownloadURL == "" || time.Since(iClient.maeshReleaseUpdatedAt) > cachePeriod {
 		logrus.Debugf("API info url: %s", repoURL)
 		resp, err := http.Get(repoURL)
@@ -83,8 +83,8 @@ func (iClient *MaeshClient) getLatestReleaseURL() error {
 		logrus.Debugf("retrieved api info: %+#v", result)
 		if result != nil && result.Assets != nil && len(result.Assets) > 0 {
 			for _, asset := range result.Assets {
-				if strings.HasSuffix(asset.Name, URLSuffix) {
-					iClient.maeshReleaseVersion = strings.Replace(asset.Name, URLSuffix, "", -1)
+				if strings.HasSuffix(asset.Name, urlSuffix) {
+					iClient.maeshReleaseVersion = strings.Replace(asset.Name, urlSuffix, "", -1)
 					iClient.maeshReleaseDownloadURL = asset.DownloadURL
 					iClient.maeshReleaseUpdatedAt = time.Now()
 					return nil
@@ -98,7 +98,7 @@ func (iClient *MaeshClient) getLatestReleaseURL() error {
 	return nil
 }
 
-func (iClient *MaeshClient) downloadFile(localFile string) error {
+func (iClient *Client) downloadFile(localFile string) error {
 	dFile, err := os.Create(localFile)
 	if err != nil {
 		err = errors.Wrapf(err, "unable to create a file on the filesystem at %s", localFile)
@@ -130,7 +130,7 @@ func (iClient *MaeshClient) downloadFile(localFile string) error {
 	return nil
 }
 
-func (iClient *MaeshClient) untarPackage(destination, fileToUntar string) error {
+func (iClient *Client) untarPackage(destination, fileToUntar string) error {
 	lFile, err := os.Open(fileToUntar)
 	if err != nil {
 		err = errors.Wrapf(err, "unable to read the local file %s", fileToUntar)
@@ -188,7 +188,7 @@ func (iClient *MaeshClient) untarPackage(destination, fileToUntar string) error 
 	}
 }
 
-func (iClient *MaeshClient) downloadMaesh() (string, error) {
+func (iClient *Client) downloadMaesh() (string, error) {
 	logrus.Debug("preparing to download the latest maesh release")
 	err := iClient.getLatestReleaseURL()
 	if err != nil {
@@ -222,7 +222,7 @@ func (iClient *MaeshClient) downloadMaesh() (string, error) {
 	return fileName, nil
 }
 
-func (iClient *MaeshClient) getMaeshComponentYAML(fileName string) (string, error) {
+func (iClient *Client) getMaeshComponentYAML(fileName string) (string, error) {
 	specificVersionName, err := iClient.downloadMaesh()
 	if err != nil {
 		return "", err
@@ -234,11 +234,10 @@ func (iClient *MaeshClient) getMaeshComponentYAML(fileName string) (string, erro
 		if os.IsNotExist(err) {
 			logrus.Error(err)
 			return "", err
-		} else {
-			err = errors.Wrap(err, "unknown error")
-			logrus.Error(err)
-			return "", err
 		}
+		err = errors.Wrap(err, "unknown error")
+		logrus.Error(err)
+		return "", err
 	}
 	fileContents, err := ioutil.ReadFile(installFileLoc)
 	if err != nil {
@@ -249,7 +248,7 @@ func (iClient *MaeshClient) getMaeshComponentYAML(fileName string) (string, erro
 	return string(fileContents), nil
 }
 
-func (iClient *MaeshClient) getCRDsYAML() ([]string, error) {
+func (iClient *Client) getCRDsYAML() ([]string, error) {
 	res := []string{}
 
 	rEx, err := regexp.Compile(crdPattern)
@@ -284,19 +283,19 @@ func (iClient *MaeshClient) getCRDsYAML() ([]string, error) {
 	return res, nil
 }
 
-func (iClient *MaeshClient) getLatestMaeshYAML(installmTLS bool) (string, error) {
+func (iClient *Client) getLatestMaeshYAML(installmTLS bool) (string, error) {
 	if installmTLS {
 		return iClient.getMaeshComponentYAML(installWithmTLSFile)
-	} else {
-		return iClient.getMaeshComponentYAML(installFile)
 	}
+	return iClient.getMaeshComponentYAML(installFile)
+	
 }
 
-func (iClient *MaeshClient) getBookInfoAppYAML() (string, error) {
+func (iClient *Client) getBookInfoAppYAML() (string, error) {
 	return iClient.getMaeshComponentYAML(bookInfoInstallFile)
 }
 
-func (iClient *MaeshClient) getBookInfoGatewayYAML() (string, error) {
+func (iClient *Client) getBookInfoGatewayYAML() (string, error) {
 	return iClient.getMaeshComponentYAML(bookInfoGatewayInstallFile)
 }
 
