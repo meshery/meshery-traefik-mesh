@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/layer5io/meshery-adapter-library/adapter"
+	"github.com/layer5io/meshery-adapter-library/common"
 	adapterconfig "github.com/layer5io/meshery-adapter-library/config"
 	"github.com/layer5io/meshery-adapter-library/status"
 	internalConfig "github.com/layer5io/meshery-maesh/internal/config"
@@ -54,6 +55,20 @@ func (mesh *Mesh) ApplyOperation(ctx context.Context, opReq adapter.OperationReq
 			}
 			ee.Summary = fmt.Sprintf("Traefik service mesh %s successfully", stat)
 			ee.Details = fmt.Sprintf("The Traefik service mesh is now %s.", stat)
+			hh.StreamInfo(e)
+		}(mesh, e)
+	case common.BookInfoOperation, common.HTTPBinOperation, common.ImageHubOperation, common.EmojiVotoOperation:
+		go func(hh *Mesh, ee *adapter.Event) {
+			appName := operations[opReq.OperationName].AdditionalProperties[common.ServiceName]
+			stat, err := hh.installSampleApp(opReq.Namespace, opReq.IsDeleteOperation, operations[opReq.OperationName].Templates)
+			if err != nil {
+				e.Summary = fmt.Sprintf("Error while %s %s application", stat, appName)
+				e.Details = err.Error()
+				hh.StreamErr(e, err)
+				return
+			}
+			ee.Summary = fmt.Sprintf("%s application %s successfully", appName, stat)
+			ee.Details = fmt.Sprintf("The %s application is now %s.", appName, stat)
 			hh.StreamInfo(e)
 		}(mesh, e)
 	default:
