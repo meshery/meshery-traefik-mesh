@@ -15,49 +15,96 @@
 package main
 
 import (
-	"flag"
 	"fmt"
-	"net"
 	"os"
+	"path"
+	"time"
 
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/grpclog"
+	"github.com/layer5io/meshery-maesh/traefik"
+	"github.com/layer5io/meshkit/logger"
 
-	"github.com/sirupsen/logrus"
-
-	"github.com/layer5io/meshery-maesh/maesh"
-	mesh "github.com/layer5io/meshery-maesh/meshes"
+	// "github.com/layer5io/meshkit/tracing"
+	"github.com/layer5io/meshery-adapter-library/adapter"
+	"github.com/layer5io/meshery-adapter-library/api/grpc"
+	configprovider "github.com/layer5io/meshery-adapter-library/config/provider"
+	"github.com/layer5io/meshery-maesh/internal/config"
 )
 
 var (
-	gRPCPort = flag.Int("grpc-port", 10006, "The gRPC server port")
+	serviceName = "maesh-adaptor"
 )
 
-var log grpclog.LoggerV2
-
 func init() {
-	log = grpclog.NewLoggerV2(os.Stdout, os.Stdout, os.Stdout)
-	grpclog.SetLoggerV2(log)
+	// Create the config path if it doesn't exists as the entire adapter
+	// expects that directory to exists, which may or may not be true
+	if err := os.MkdirAll(path.Join(config.RootPath(), "bin"), 0750); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
 
+// main is the entrypoint of the adaptor
 func main() {
-	flag.Parse()
-
-	if os.Getenv("DEBUG") == "true" {
-		logrus.SetLevel(logrus.DebugLevel)
-	}
-
-	addr := fmt.Sprintf(":%d", *gRPCPort)
-	lis, err := net.Listen("tcp", addr)
+	// Initialize Logger instance
+	log, err := logger.New(serviceName, logger.Options{
+		Format: logger.SyslogLogFormat,
+	})
 	if err != nil {
-		logrus.Fatalln("Failed to listen:", err)
+		fmt.Println(err)
+		os.Exit(1)
 	}
-	s := grpc.NewServer(
-	// grpc.Creds(credentials.NewServerTLSFromCert(&insecure.Cert)),
-	)
-	mesh.RegisterMeshServiceServer(s, &maesh.Client{})
 
-	// Serve gRPC Server
-	logrus.Infof("Serving gRPC on %s", addr)
-	logrus.Fatal(s.Serve(lis))
+	err = os.Setenv("KUBECONFIG", path.Join(
+		config.KubeConfig[configprovider.FilePath],
+		fmt.Sprintf("%s.%s", config.KubeConfig[configprovider.FileName], config.KubeConfig[configprovider.FileType])),
+	)
+
+	if err != nil {
+		// Fail silently
+		log.Warn(err)
+	}
+
+	// Initialize application specific configs and dependencies
+	// App and request config
+	cfg, err := config.New(configprovider.ViperKey)
+	if err != nil {
+		log.Error(err)
+		os.Exit(1)
+	}
+
+	service := &grpc.Service{}
+	err = cfg.GetObject(adapter.ServerKey, service)
+	if err != nil {
+		log.Error(err)
+		os.Exit(1)
+	}
+
+	kubeconfigHandler, err := config.NewKubeconfigBuilder(configprovider.ViperKey)
+	if err != nil {
+		log.Error(err)
+		os.Exit(1)
+	}
+
+	// // Initialize Tracing instance
+	// tracer, err := tracing.New(service.Name, service.TraceURL)
+	// if err != nil {
+	//      log.Err("Tracing Init Failed", err.Error())
+	//      os.Exit(1)
+	// }
+
+	// Initialize Handler intance
+	handler := traefik.New(cfg, log, kubeconfigHandler)
+	handler = adapter.AddLogger(log, handler)
+
+	service.Handler = handler
+	service.Channel = make(chan interface{}, 10)
+	service.StartedAt = time.Now()
+
+	// Server Initialization
+	log.Info("Adaptor Listening at port: ", service.Port)
+	err = grpc.Start(service, nil)
+	if err != nil {
+		log.Error(err)
+		os.Exit(1)
+	}
 }
