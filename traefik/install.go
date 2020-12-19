@@ -109,6 +109,8 @@ func ConvertAppVersionToChartVersion(repo, chart, appVersion string) (string, er
 func CreateHelmIndex(repo string) (*HelmIndex, error) {
 	url := fmt.Sprintf("%s/index.yaml", repo)
 
+	// helm repository path will alaways be varaible hence,
+	// #nosec
 	resp, err := http.Get(url)
 	if err != nil || resp.StatusCode != http.StatusOK {
 		return nil, ErrHelmRepositoryNotFound(repo, err)

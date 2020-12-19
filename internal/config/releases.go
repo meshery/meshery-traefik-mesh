@@ -11,10 +11,6 @@ import (
 	"github.com/layer5io/meshery-adapter-library/adapter"
 )
 
-// cacheCheck is the time in weeks when the releases
-// should be updated grom github release pages
-const cacheCheck = 1
-
 // Release is used to save the release informations
 type Release struct {
 	ID      int             `json:"id,omitempty"`
