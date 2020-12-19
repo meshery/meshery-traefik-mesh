@@ -84,7 +84,26 @@ func (mesh *Mesh) ApplyOperation(ctx context.Context, opReq adapter.OperationReq
 			ee.Details = ""
 			hh.StreamInfo(e)
 		}(mesh, e)
+	case common.SmiConformanceOperation:
+		go func(hh *Mesh, ee *adapter.Event) {
+			name := operations[opReq.OperationName].Description
 
+			err := hh.ValidateSMIConformance(&adapter.SmiTestOptions{
+				Ctx:         context.TODO(),
+				OpID:        ee.Operationid,
+				Labels:      make(map[string]string),
+				Annotations: make(map[string]string),
+			})
+			if err != nil {
+				e.Summary = fmt.Sprintf("Error while %s %s test", status.Running, name)
+				e.Details = err.Error()
+				hh.StreamErr(e, err)
+				return
+			}
+			ee.Summary = fmt.Sprintf("%s test %s successfully", name, status.Completed)
+			ee.Details = ""
+			hh.StreamInfo(e)
+		}(mesh, e)
 	default:
 		mesh.StreamErr(e, ErrOpInvalid)
 	}
