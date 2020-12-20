@@ -12,6 +12,11 @@ import (
 	"github.com/layer5io/meshkit/logger"
 )
 
+const (
+	// SMIManifest is the manifest.yaml file for smi conformance tool
+	SMIManifest = "https://raw.githubusercontent.com/layer5io/learn-layer5/master/smi-conformance/manifest.yml"
+)
+
 // Mesh represents the traefik-mesh adapter and embeds adapter.Adapter
 type Mesh struct {
 	adapter.Adapter // Type Embedded
@@ -87,10 +92,11 @@ func (mesh *Mesh) ApplyOperation(ctx context.Context, opReq adapter.OperationReq
 	case common.SmiConformanceOperation:
 		go func(hh *Mesh, ee *adapter.Event) {
 			name := operations[opReq.OperationName].Description
-
-			err := hh.ValidateSMIConformance(&adapter.SmiTestOptions{
+			_, err := hh.RunSMITest(adapter.SMITestOptions{
 				Ctx:         context.TODO(),
-				OpID:        ee.Operationid,
+				OperationID: ee.Operationid,
+				Manifest:    SMIManifest,
+				Namespace:   "meshery",
 				Labels:      make(map[string]string),
 				Annotations: make(map[string]string),
 			})
