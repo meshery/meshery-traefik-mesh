@@ -21,12 +21,21 @@ import (
 )
 
 const (
-	ErrEmptyConfigCode           = "11300"
-	ErrGetLatestReleasesCode     = "traefik_mesh_test_code"
+	// ErrEmptyConfigCode represents the error when the configuration is either empty
+	// or is invalid
+	ErrEmptyConfigCode = "11300"
+
+	// ErrGetLatestReleasesCode represents the error which occurs during the process of getting
+	// latest releases
+	ErrGetLatestReleasesCode = "traefik_mesh_test_code"
+
+	// ErrGetLatestReleaseNamesCode represents the error which occurs during the process of extracting
+	// release names
 	ErrGetLatestReleaseNamesCode = "traefik_mesh_test_code"
 )
 
 var (
+	// ErrEmptyConfig error is the error when config is invalid
 	ErrEmptyConfig = errors.NewDefault(ErrEmptyConfigCode, "Config is empty")
 )
 

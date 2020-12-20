@@ -11,12 +11,15 @@ import (
 )
 
 const (
+	// TraefikMeshOperation is the default name for the install
+	// and uninstall commands on the traefik mesh
 	TraefikMeshOperation = "maesh"
 )
 
 var (
 	configRootPath = path.Join(utils.GetHome(), ".meshery")
 
+	// Config is the collection of ServerConfig, MeshConfig and ProviderConfig
 	Config = configprovider.Options{
 		ServerConfig:   ServerConfig,
 		MeshSpec:       MeshSpec,
@@ -24,12 +27,14 @@ var (
 		Operations:     Operations,
 	}
 
+	// ServerConfig is the configuration for the gRPC server
 	ServerConfig = map[string]string{
 		"name":    "maesh-adapter",
 		"port":    "10006",
 		"version": "v1.0.0",
 	}
 
+	// MeshSpec is the spec for the service mesh associated with this adapter
 	MeshSpec = map[string]string{
 		"name":     "maesh",
 		"status":   status.None,
@@ -37,6 +42,7 @@ var (
 		"version":  status.None,
 	}
 
+	// ProviderConfig is the config for the configuration provider
 	ProviderConfig = map[string]string{
 		configprovider.FilePath: configRootPath,
 		configprovider.FileType: "yaml",
@@ -50,6 +56,8 @@ var (
 		configprovider.FileName: "kubeconfig",
 	}
 
+	// Operations represents the set of valid operations that are available
+	// to the adapter
 	Operations = getOperations(common.Operations)
 )
 
@@ -66,6 +74,9 @@ func New(provider string) (config.Handler, error) {
 	return nil, ErrEmptyConfig
 }
 
+// NewKubeconfigBuilder returns a config handler based on the provider
+//
+// Valid prividers are "viper" and "in-mem"
 func NewKubeconfigBuilder(provider string) (config.Handler, error) {
 	opts := configprovider.Options{}
 	opts.ProviderConfig = KubeConfig
