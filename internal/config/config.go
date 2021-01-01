@@ -36,7 +36,7 @@ var (
 
 	// MeshSpec is the spec for the service mesh associated with this adapter
 	MeshSpec = map[string]string{
-		"name":     "traefik-mesh",
+		"name":     "traefik mesh",
 		"status":   status.None,
 		"traceurl": status.None,
 		"version":  status.None,
