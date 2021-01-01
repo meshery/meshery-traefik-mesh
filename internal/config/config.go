@@ -13,7 +13,7 @@ import (
 const (
 	// TraefikMeshOperation is the default name for the install
 	// and uninstall commands on the traefik mesh
-	TraefikMeshOperation = "maesh"
+	TraefikMeshOperation = "traefik-mesh"
 )
 
 var (
@@ -29,14 +29,14 @@ var (
 
 	// ServerConfig is the configuration for the gRPC server
 	ServerConfig = map[string]string{
-		"name":    "maesh-adapter",
+		"name":    "traefik-mesh-adapter",
 		"port":    "10006",
 		"version": "v1.0.0",
 	}
 
 	// MeshSpec is the spec for the service mesh associated with this adapter
 	MeshSpec = map[string]string{
-		"name":     "maesh",
+		"name":     "traefik-mesh",
 		"status":   status.None,
 		"traceurl": status.None,
 		"version":  status.None,
@@ -46,7 +46,7 @@ var (
 	ProviderConfig = map[string]string{
 		configprovider.FilePath: configRootPath,
 		configprovider.FileType: "yaml",
-		configprovider.FileName: "maesh",
+		configprovider.FileName: "traefik-mesh",
 	}
 
 	// KubeConfig - Controlling the kubeconfig lifecycle with viper

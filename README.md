@@ -1,12 +1,12 @@
 <p style="text-align:center;" align="center"><a href="https://layer5.io/meshery"><img align="center" style="margin-bottom:20px;" src="https://raw.githubusercontent.com/layer5io/layer5/master/assets/images/meshery/meshery-logo-tag-light-text-side.png"  width="70%" /></a><br /><br /></p>
 
-# Meshery Adapter for Maesh
+# Meshery Adapter for Traefik Mesh
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/layer5/meshery-maesh.svg)](https://hub.docker.com/r/layer5/meshery-maesh)
 [![Go Report Card](https://goreportcard.com/badge/github.com/layer5io/meshery-traefik-mesh)](https://goreportcard.com/report/github.com/layer5io/meshery-traefik-mesh)
 [![Build Status](https://github.com/layer5io/meshery-traefik-mesh/workflows/Meshery-Maesh/badge.svg)](https://github.com/layer5io/meshery-traefik-mesh/actions)
 [![GitHub](https://img.shields.io/github/license/layer5io/meshery-maesh.svg)](LICENSE)
-[![GitHub issues by-label](https://img.shields.io/github/issues/layer5io/meshery-maesh/help%20wanted.svg)](https://github.com/layer5io/meshery-traefik-mesh/issues?q=is%3Aopen+is%3Aissue+label%3A%22help+wanted%22)
+[![GitHub issues by-label](https://img.shields.io/github/issues/layer5io/meshery-traefik-mesh/help%20wanted.svg)](https://github.com/layer5io/meshery-traefik-mesh/issues?q=is%3Aopen+is%3Aissue+label%3A%22help+wanted%22)
 [![Website](https://img.shields.io/website/https/layer5.io/meshery.svg)](https://layer5.io/meshery/)
 [![Twitter Follow](https://img.shields.io/twitter/follow/layer5.svg?label=Follow&style=social)](https://twitter.com/intent/follow?screen_name=mesheryio)
 [![Slack](http://slack.layer5.io/badge.svg)](http://slack.layer5.io)

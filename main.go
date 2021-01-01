@@ -31,7 +31,7 @@ import (
 )
 
 var (
-	serviceName = "maesh-adaptor"
+	serviceName = "traefik-mesh-adaptor"
 )
 
 func init() {
