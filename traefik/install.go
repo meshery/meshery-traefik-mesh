@@ -78,8 +78,9 @@ func (mesh *Mesh) applyHelmChart(del bool, version, namespace string) error {
 			Chart:      chart,
 			Version:    chartVersion,
 		},
-		Namespace: namespace,
-		Delete:    del,
+		Namespace:       namespace,
+		Delete:          del,
+		CreateNamespace: true,
 	})
 
 	return err
