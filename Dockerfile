@@ -2,7 +2,7 @@ FROM golang:1.13 as bd
 RUN adduser --disabled-login appuser
 WORKDIR /github.com/layer5io/meshery-traefik-mesh
 ADD . .
-RUN GOPROXY=direct GOSUMDB=off go build -ldflags="-w -s" -a -o /meshery-traefik-mesh .
+RUN GOPROXY=https://proxy.golang.org GOSUMDB=off go build -ldflags="-w -s" -a -o /meshery-traefik-mesh .
 RUN find . -name "*.go" -type f -delete; mv traefik-mesh /
 
 FROM alpine
