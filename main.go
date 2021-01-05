@@ -20,18 +20,18 @@ import (
 	"path"
 	"time"
 
-	"github.com/layer5io/meshery-maesh/traefik"
+	"github.com/layer5io/meshery-traefik-mesh/traefik"
 	"github.com/layer5io/meshkit/logger"
 
 	// "github.com/layer5io/meshkit/tracing"
 	"github.com/layer5io/meshery-adapter-library/adapter"
 	"github.com/layer5io/meshery-adapter-library/api/grpc"
 	configprovider "github.com/layer5io/meshery-adapter-library/config/provider"
-	"github.com/layer5io/meshery-maesh/internal/config"
+	"github.com/layer5io/meshery-traefik-mesh/internal/config"
 )
 
 var (
-	serviceName = "maesh-adaptor"
+	serviceName = "traefik-mesh-adaptor"
 )
 
 func init() {

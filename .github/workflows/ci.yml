@@ -1,4 +1,4 @@
-name: Meshery-Maesh
+name: Meshery-traefik-mesh
 on:
   push:
     branches:

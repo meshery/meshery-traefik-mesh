@@ -1,4 +1,4 @@
-module github.com/layer5io/meshery-maesh
+module github.com/layer5io/meshery-traefik-mesh
 
 go 1.15
 

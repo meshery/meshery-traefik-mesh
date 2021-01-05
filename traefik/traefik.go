@@ -8,7 +8,7 @@ import (
 	"github.com/layer5io/meshery-adapter-library/common"
 	adapterconfig "github.com/layer5io/meshery-adapter-library/config"
 	"github.com/layer5io/meshery-adapter-library/status"
-	internalConfig "github.com/layer5io/meshery-maesh/internal/config"
+	internalConfig "github.com/layer5io/meshery-traefik-mesh/internal/config"
 	"github.com/layer5io/meshkit/logger"
 )
 
