@@ -1,8 +1,7 @@
-name: Meshery-nginx Build and Releaser
+name: Meshery Traefik Mesh Build and Releaser
 on:
   release:
-    tags:
-      - 'v*'
+    types: [published]
 
 jobs:
   build:
