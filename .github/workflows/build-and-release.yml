@@ -2,7 +2,9 @@ name: Meshery Traefik Mesh Build and Releaser
 on:
   release:
     types: [published]
-
+  push:
+    branches:
+      - "master"
 jobs:
   build:
     name: Build check
