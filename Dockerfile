@@ -1,6 +1,5 @@
 FROM golang:1.15 as builder
 
-ARG ENVIRONMENT="development"
 ARG CONFIG_PROVIDER="viper"
 WORKDIR /build
 # Copy the Go Modules manifests
@@ -14,7 +13,7 @@ COPY main.go main.go
 COPY internal/ internal/
 COPY traefik/ traefik/
 # Build
-RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -ldflags="-w -s -X main.environment=$ENVIRONMENT -X main.provider=$CONFIG_PROVIDER" -a -o meshery-traefik-mesh main.go
+RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -ldflags="-w -s -X main.provider=$CONFIG_PROVIDER" -a -o meshery-traefik-mesh main.go
 
 # Use distroless as minimal base image to package the manager binary
 # Refer to https://github.com/GoogleContainerTools/distroless for more details
