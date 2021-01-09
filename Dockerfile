@@ -1,4 +1,4 @@
-FROM golang:1.13 as builder
+FROM golang:1.15 as builder
 
 ARG ENVIRONMENT="development"
 ARG CONFIG_PROVIDER="viper"
@@ -18,9 +18,9 @@ RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -ldflags="-w -
 
 # Use distroless as minimal base image to package the manager binary
 # Refer to https://github.com/GoogleContainerTools/distroless for more details
-FROM gcr.io/distroless/base
+FROM gcr.io/distroless/base:nonroot-amd64
 ENV DISTRO="debian"
 ENV GOARCH="amd64"
-WORKDIR /
+WORKDIR $HOME/.meshery
 COPY --from=builder /build/meshery-traefik-mesh .
-ENTRYPOINT ["/meshery-traefik-mesh"]
+ENTRYPOINT ["./meshery-traefik-mesh"]
