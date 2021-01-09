@@ -3,7 +3,7 @@ RUN adduser --disabled-login appuser
 WORKDIR /github.com/layer5io/meshery-traefik-mesh
 ADD . .
 RUN GOPROXY=https://proxy.golang.org GOSUMDB=off go build -ldflags="-w -s" -a -o /meshery-traefik-mesh .
-RUN find . -name "*.go" -type f -delete; mv /meshery-traefik-mesh /
+RUN find . -name "*.go" -type f -delete
 
 FROM alpine
 RUN apk --update add ca-certificates
