@@ -1,18 +1,26 @@
-FROM golang:1.15 as bd
-WORKDIR /github.com/layer5io/meshery-traefik-mesh
-ADD . .
-RUN GOPROXY=https://proxy.golang.org GOSUMDB=off go build -ldflags="-w -s" -a -o /meshery-traefik-mesh .
-RUN find . -name "*.go" -type f -delete
+FROM golang:1.13 as builder
 
-FROM alpine
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-RUN apk --update add ca-certificates
-RUN mkdir /lib64 && ln -s /lib/libc.musl-x86_64.so.1 /lib64/ld-linux-x86-64.so.2
+ARG ENVIRONMENT="development"
+ARG CONFIG_PROVIDER="viper"
+WORKDIR /build
+# Copy the Go Modules manifests
+COPY go.mod go.mod
+COPY go.sum go.sum
+# cache deps before building and copying source so that we don't need to re-download as much
+# and so that source changes don't invalidate our downloaded layer
+RUN go mod download
+# Copy the go source
+COPY main.go main.go
+COPY internal/ internal/
+COPY traefik/ traefik/
+# Build
+RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -ldflags="-w -s -X main.environment=$ENVIRONMENT -X main.provider=$CONFIG_PROVIDER" -a -o meshery-traefik-mesh main.go
 
-USER appuser
-RUN mkdir -p /home/appuser/.kube
-RUN mkdir -p /home/appuser/.meshery
-WORKDIR /home/appuser
-COPY --from=bd /meshery-traefik-mesh /home/appuser
-# COPY --from=bd /etc/passwd /etc/passwd
-CMD ./meshery-traefik-mesh
+# Use distroless as minimal base image to package the manager binary
+# Refer to https://github.com/GoogleContainerTools/distroless for more details
+FROM gcr.io/distroless/base
+ENV DISTRO="debian"
+ENV GOARCH="amd64"
+WORKDIR /
+COPY --from=builder /build/meshery-traefik-mesh .
+ENTRYPOINT ["/meshery-traefik-mesh"]
