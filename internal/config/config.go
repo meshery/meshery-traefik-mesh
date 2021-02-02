@@ -41,7 +41,7 @@ var (
 		"status":   status.None,
 		"traceurl": status.None,
 		"version":  status.None,
-		"type":     smp.ServiceMesh_MAESH.Enum().String(),
+		"type":     smp.ServiceMesh_TRAEFIK_MESH.Enum().String(),
 	}
 
 	// ProviderConfig is the config for the configuration provider
