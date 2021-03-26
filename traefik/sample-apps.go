@@ -30,12 +30,9 @@ func (mesh *Mesh) installSampleApp(namespace string, del bool, templates []adapt
 }
 
 func (mesh *Mesh) applyManifest(contents []byte, isDel bool, namespace string) error {
-	kclient, err := mesherykube.New(mesh.KubeClient, mesh.RestConfig)
-	if err != nil {
-		return err
-	}
+	kclient := mesh.MesheryKubeclient
 
-	err = kclient.ApplyManifest(contents, mesherykube.ApplyOptions{
+	err := kclient.ApplyManifest(contents, mesherykube.ApplyOptions{
 		Namespace: namespace,
 		Update:    true,
 		Delete:    isDel,
