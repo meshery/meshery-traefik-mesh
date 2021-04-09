@@ -107,6 +107,9 @@ func (mesh *Mesh) ApplyOperation(ctx context.Context, opReq adapter.OperationReq
 				hh.StreamErr(e, err)
 				return
 			}
+			ee.Summary = fmt.Sprintf("%s test %s successfully", name, status.Completed)
+			ee.Details = ""
+			hh.StreamInfo(e)
 		}(mesh, e)
 	default:
 		mesh.StreamErr(e, ErrOpInvalid)

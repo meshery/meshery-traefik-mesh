@@ -32,6 +32,8 @@ import (
 
 var (
 	serviceName = "traefik-mesh-adaptor"
+	version     = "none"
+	gitsha      = "none"
 )
 
 func init() {
@@ -99,6 +101,8 @@ func main() {
 	service.Handler = handler
 	service.Channel = make(chan interface{}, 10)
 	service.StartedAt = time.Now()
+	service.Version = version
+	service.GitSHA = gitsha
 
 	// Server Initialization
 	log.Info("Adaptor Listening at port: ", service.Port)
