@@ -3,7 +3,6 @@ package traefik
 import (
 	"github.com/layer5io/meshery-adapter-library/adapter"
 	"github.com/layer5io/meshery-adapter-library/status"
-	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 )
 
@@ -15,12 +14,7 @@ func (mesh *Mesh) installSampleApp(namespace string, del bool, templates []adapt
 	}
 
 	for _, template := range templates {
-		contents, err := utils.ReadFileSource(string(template))
-		if err != nil {
-			return st, ErrSampleApp(err)
-		}
-
-		err = mesh.applyManifest([]byte(contents), del, namespace)
+		err := mesh.applyManifest([]byte(template.String()), del, namespace)
 		if err != nil {
 			return st, ErrSampleApp(err)
 		}
