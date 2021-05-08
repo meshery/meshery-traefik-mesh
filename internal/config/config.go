@@ -8,6 +8,7 @@ import (
 	configprovider "github.com/layer5io/meshery-adapter-library/config/provider"
 	"github.com/layer5io/meshery-adapter-library/status"
 	"github.com/layer5io/meshkit/utils"
+	smp "github.com/layer5io/service-mesh-performance/spec"
 )
 
 const (
@@ -29,17 +30,17 @@ var (
 
 	// ServerConfig is the configuration for the gRPC server
 	ServerConfig = map[string]string{
-		"name":    "traefik-mesh-adapter",
-		"port":    "10006",
-		"version": "v1.0.0",
+		"name":     smp.ServiceMesh_TRAEFIK_MESH.Enum().String(),
+		"port":     "10006",
+		"type":     "adapter",
+		"traceurl": status.None,
 	}
 
 	// MeshSpec is the spec for the service mesh associated with this adapter
 	MeshSpec = map[string]string{
-		"name":     "traefik mesh",
-		"status":   status.None,
-		"traceurl": status.None,
-		"version":  status.None,
+		"name":    smp.ServiceMesh_TRAEFIK_MESH.Enum().String(),
+		"status":  status.None,
+		"version": status.None,
 	}
 
 	// ProviderConfig is the config for the configuration provider

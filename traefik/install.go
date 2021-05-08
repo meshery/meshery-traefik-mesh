@@ -59,10 +59,7 @@ func (mesh *Mesh) installTraefikMesh(del bool, version, namespace string) (strin
 }
 
 func (mesh *Mesh) applyHelmChart(del bool, version, namespace string) error {
-	kClient, err := mesherykube.New(mesh.KubeClient, mesh.RestConfig)
-	if err != nil {
-		return err
-	}
+	kClient := mesh.MesheryKubeclient
 
 	repo := "https://helm.traefik.io/mesh"
 	chart := "traefik-mesh"

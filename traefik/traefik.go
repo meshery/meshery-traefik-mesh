@@ -1,3 +1,4 @@
+// Package traefik - Common operations for the adapter
 package traefik
 
 import (
