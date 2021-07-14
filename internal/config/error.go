@@ -21,15 +21,15 @@ import (
 const (
 	// ErrEmptyConfigCode represents the error when the configuration is either empty
 	// or is invalid
-	ErrEmptyConfigCode = "traefik_mesh_test_code"
+	ErrEmptyConfigCode = "replace_traefik_test_code"
 
 	// ErrGetLatestReleasesCode represents the error which occurs during the process of getting
 	// latest releases
-	ErrGetLatestReleasesCode = "traefik_mesh_test_code"
+	ErrGetLatestReleasesCode = "replace_traefik_test_code"
 
 	// ErrGetLatestReleaseNamesCode represents the error which occurs during the process of extracting
 	// release names
-	ErrGetLatestReleaseNamesCode = "traefik_mesh_test_code"
+	ErrGetLatestReleaseNamesCode = "replace_traefik_test_code"
 )
 
 var (

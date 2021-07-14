@@ -11,51 +11,51 @@ var (
 
 	// ErrInstallTraefikCode represents the errors which are generated
 	// during traefik mesh install process
-	ErrInstallTraefikCode = "traefik_test_code"
+	ErrInstallTraefikCode = "replace_traefik_test_code"
 
 	// ErrCreatingHelmIndexCode represents the errors which are generated
 	// during creation of helm index
-	ErrCreatingHelmIndexCode = "traefik_test_code"
+	ErrCreatingHelmIndexCode = "replace_traefik_test_code"
 
 	// ErrEntryWithAppVersionNotExistsCode represents the error which is generated
 	// when no entry is found with specified name and app version
-	ErrEntryWithAppVersionNotExistsCode = "traefik_test_code"
+	ErrEntryWithAppVersionNotExistsCode = "replace_traefik_test_code"
 
 	// ErrHelmRepositoryNotFoundCode represents the error which is generated when
 	// no valid helm repository is found
-	ErrHelmRepositoryNotFoundCode = "traefik_test_code"
+	ErrHelmRepositoryNotFoundCode = "replace_traefik_test_code"
 
 	// ErrDecodeYamlCode represents the error which is generated when yaml
 	// decode process fails
-	ErrDecodeYamlCode = "traefik_test_code"
+	ErrDecodeYamlCode = "replace_traefik_test_code"
 
 	// ErrMeshConfigCode represents the errors which are generated
 	// when an invalid mesh config is found
-	ErrMeshConfigCode = "traefik_test_code"
+	ErrMeshConfigCode = "replace_traefik_test_code"
 
 	// ErrApplyHelmChartCode represents the error which are generated
 	// during the process of applying helm chart
-	ErrApplyHelmChartCode = "traefik_test_code"
+	ErrApplyHelmChartCode = "replace_traefik_test_code"
 
 	// ErrConvertingAppVersionToChartVersionCode represents the errors which are generated
 	// during the process of converting app version to chart version
-	ErrConvertingAppVersionToChartVersionCode = "traefik_test_code"
+	ErrConvertingAppVersionToChartVersionCode = "replace_traefik_test_code"
 
 	// ErrCreatingTraefikMeshClientCode represents the errors which are generated
 	// during creating traefik client process
-	ErrCreatingTraefikMeshClientCode = "traefik_test_code"
+	ErrCreatingTraefikMeshClientCode = "replace_traefik_test_code"
 
 	// ErrSampleAppCode represents the errors which are generated
 	// duing sample app installation
-	ErrSampleAppCode = "traefik_test_code"
+	ErrSampleAppCode = "replace_traefik_test_code"
 
 	// ErrCustomOperationCode represents the errors which are generated
 	// when an invalid addon operation is requested
-	ErrCustomOperationCode = "traefik_test_code"
+	ErrCustomOperationCode = "replace_traefik_test_code"
 
 	// ErrOpInvalid represents the errors which are generated
 	// when an invalid operation is requested
-	ErrOpInvalidCode = "traefik_test_code"
+	ErrOpInvalidCode = "replace_traefik_test_code"
 
 	// ErrOpInvalid is an error when an invalid operation is requested
 	ErrOpInvalid = errors.New(ErrOpInvalidCode, errors.Alert, []string{"Invalid operation"}, []string{}, []string{}, []string{})
