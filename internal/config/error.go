@@ -15,15 +15,13 @@
 package config
 
 import (
-	"fmt"
-
 	"github.com/layer5io/meshkit/errors"
 )
 
 const (
 	// ErrEmptyConfigCode represents the error when the configuration is either empty
 	// or is invalid
-	ErrEmptyConfigCode = "11300"
+	ErrEmptyConfigCode = "traefik_mesh_test_code"
 
 	// ErrGetLatestReleasesCode represents the error which occurs during the process of getting
 	// latest releases
@@ -36,15 +34,15 @@ const (
 
 var (
 	// ErrEmptyConfig error is the error when config is invalid
-	ErrEmptyConfig = errors.NewDefault(ErrEmptyConfigCode, "Config is empty")
+	ErrEmptyConfig = errors.New(ErrEmptyConfigCode, errors.Alert, []string{"Config is empty"}, []string{}, []string{}, []string{})
 )
 
-// ErrGetLatestReleases is the error for fetching traefik-mesh releases
+// ErrGetLatestReleases is the error for fetching nsm-mesh releases
 func ErrGetLatestReleases(err error) error {
-	return errors.NewDefault(ErrGetLatestReleasesCode, fmt.Sprintf("unable to fetch release info: %s", err.Error()))
+	return errors.New(ErrGetLatestReleasesCode, errors.Alert, []string{"Unable to fetch release info"}, []string{err.Error()}, []string{}, []string{})
 }
 
-// ErrGetLatestReleaseNames is the error for fetching traefik-mesh releases
+// ErrGetLatestReleaseNames is the error for fetching nsm-mesh releases
 func ErrGetLatestReleaseNames(err error) error {
-	return errors.NewDefault(ErrGetLatestReleaseNamesCode, fmt.Sprintf("failed to extract release names: %s", err.Error()))
+	return errors.New(ErrGetLatestReleaseNamesCode, errors.Alert, []string{"Failed to extract release names"}, []string{err.Error()}, []string{}, []string{})
 }
