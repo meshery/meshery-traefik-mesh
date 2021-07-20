@@ -53,7 +53,7 @@ var (
 	// when an invalid addon operation is requested
 	ErrCustomOperationCode = "replace_traefik_test_code"
 
-	// ErrOpInvalid represents the errors which are generated
+	// ErrOpInvalidCode represents the error code which are generated
 	// when an invalid operation is requested
 	ErrOpInvalidCode = "replace_traefik_test_code"
 
