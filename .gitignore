@@ -15,3 +15,6 @@
 .vscode
 
 meshery-traefik-mesh
+
+cmd/errorutil/errorutil
+/errorutil
