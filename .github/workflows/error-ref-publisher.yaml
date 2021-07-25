@@ -60,6 +60,6 @@ jobs:
             exit
           fi
           git add ./docs/_data/errorref/traefik-mesh_errors_export.json
-          git commit -m "[Docs] Error Code Reference: Updated codes for traefik-mesh adapter library" --signoff
+          git commit -m "[Docs] Error Code Reference: Updated codes for traefik-mesh adapter " --signoff
           git push origin master
           
