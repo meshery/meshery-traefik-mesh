@@ -2,6 +2,7 @@ package config
 
 import (
 	"path"
+	"strings"
 
 	"github.com/layer5io/meshery-adapter-library/common"
 	"github.com/layer5io/meshery-adapter-library/config"
@@ -11,13 +12,11 @@ import (
 	smp "github.com/layer5io/service-mesh-performance/spec"
 )
 
-const (
+var (
 	// TraefikMeshOperation is the default name for the install
 	// and uninstall commands on the traefik mesh
-	TraefikMeshOperation = "traefik-mesh"
-)
+	TraefikMeshOperation = strings.ToLower(smp.ServiceMesh_TRAEFIK_MESH.Enum().String())
 
-var (
 	configRootPath = path.Join(utils.GetHome(), ".meshery")
 
 	// Config is the collection of ServerConfig, MeshConfig and ProviderConfig
