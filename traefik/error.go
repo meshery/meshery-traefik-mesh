@@ -84,6 +84,10 @@ var (
 	// generated during the OAM configuration parsing
 	ErrParseOAMConfigCode = "1019"
 
+	// ErrNilClient represents the error which is
+	// generated when kubernetes client is nil
+	ErrNilClient = errors.New(ErrNilClientCode, errors.Alert, []string{"kubernetes client not initialized"}, []string{"Kubernetes client is nil"}, []string{"kubernetes client not initialized"}, []string{"Reconnect the adaptor to Meshery server"})
+
 	// ErrParseOAMComponent represents the error which is
 	// generated during the OAM component parsing
 	ErrParseOAMComponent = errors.New(ErrParseOAMComponentCode, errors.Alert, []string{"error parsing the component"}, []string{"Error occured while prasing application component in the OAM request made"}, []string{"Invalid OAM component passed in OAM request"}, []string{"Check if your request has vaild OAM components"})
@@ -96,6 +100,11 @@ var (
 // ErrInstallTraefik is the error for install mesh
 func ErrInstallTraefik(err error) error {
 	return errors.New(ErrInstallTraefikCode, errors.Alert, []string{"Error with traefik operation"}, []string{err.Error()}, []string{}, []string{})
+}
+
+// ErrDecodeYaml is the error when the yaml unmarshal fails
+func ErrDecodeYaml(err error) error {
+	return errors.New(ErrDecodeYamlCode, errors.Alert, []string{"Error occured while decoding YAML"}, []string{err.Error()}, []string{}, []string{})
 }
 
 // ErrCreatingHelmIndex is the error for creating helm index

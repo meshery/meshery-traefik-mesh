@@ -121,12 +121,12 @@ func (mesh *Mesh) ApplyOperation(ctx context.Context, opReq adapter.OperationReq
 }
 
 // ProcessOAM will handles the grpc invocation for handling OAM objects
-func (h *Handler) ProcessOAM(ctx context.Context, oamReq adapter.OAMRequest) (string, error) {
+func (mesh *Mesh) ProcessOAM(ctx context.Context, oamReq adapter.OAMRequest) (string, error) {
 	var comps []v1alpha1.Component
 	for _, acomp := range oamReq.OamComps {
 		comp, err := oam.ParseApplicationComponent(acomp)
 		if err != nil {
-			h.Log.Error(ErrParseOAMComponent)
+			mesh.Log.Error(ErrParseOAMComponent)
 			continue
 		}
 
@@ -135,19 +135,19 @@ func (h *Handler) ProcessOAM(ctx context.Context, oamReq adapter.OAMRequest) (st
 
 	config, err := oam.ParseApplicationConfiguration(oamReq.OamConfig)
 	if err != nil {
-		h.Log.Error(ErrParseOAMConfig)
+		mesh.Log.Error(ErrParseOAMConfig)
 	}
 
 	// If operation is delete then first HandleConfiguration and then handle the deployment
 	if oamReq.DeleteOp {
 		// Process configuration
-		msg2, err := h.HandleApplicationConfiguration(config, oamReq.DeleteOp)
+		msg2, err := mesh.HandleApplicationConfiguration(config, oamReq.DeleteOp)
 		if err != nil {
 			return msg2, ErrProcessOAM(err)
 		}
 
 		// Process components
-		msg1, err := h.HandleComponents(comps, oamReq.DeleteOp)
+		msg1, err := mesh.HandleComponents(comps, oamReq.DeleteOp)
 		if err != nil {
 			return msg1 + "\n" + msg2, ErrProcessOAM(err)
 		}
@@ -156,13 +156,13 @@ func (h *Handler) ProcessOAM(ctx context.Context, oamReq adapter.OAMRequest) (st
 	}
 
 	// Process components
-	msg1, err := h.HandleComponents(comps, oamReq.DeleteOp)
+	msg1, err := mesh.HandleComponents(comps, oamReq.DeleteOp)
 	if err != nil {
 		return msg1, ErrProcessOAM(err)
 	}
 
 	// Process configuration
-	msg2, err := h.HandleApplicationConfiguration(config, oamReq.DeleteOp)
+	msg2, err := mesh.HandleApplicationConfiguration(config, oamReq.DeleteOp)
 	if err != nil {
 		return msg1 + "\n" + msg2, ErrProcessOAM(err)
 	}

@@ -9,10 +9,10 @@ import (
 )
 
 // CompHandler is the type for functions which can handle OAM components
-type CompHandler func(*Handler, v1alpha1.Component, bool) (string, error)
+type CompHandler func(*Mesh, v1alpha1.Component, bool) (string, error)
 
 // HandleComponents handles the processing of OAM components
-func (h *Handler) HandleComponents(comps []v1alpha1.Component, isDel bool) (string, error) {
+func (h *Mesh) HandleComponents(comps []v1alpha1.Component, isDel bool) (string, error) {
 	var errs []error
 	var msgs []string
 
@@ -50,7 +50,7 @@ func (h *Handler) HandleComponents(comps []v1alpha1.Component, isDel bool) (stri
 }
 
 // HandleApplicationConfiguration handles the processing of OAM application configuration
-func (h *Handler) HandleApplicationConfiguration(config v1alpha1.Configuration, isDel bool) (string, error) {
+func (h *Mesh) HandleApplicationConfiguration(config v1alpha1.Configuration, isDel bool) (string, error) {
 	var errs []error
 	var msgs []string
 	for _, comp := range config.Spec.Components {
@@ -73,7 +73,7 @@ func (h *Handler) HandleApplicationConfiguration(config v1alpha1.Configuration, 
 	return mergeMsgs(msgs), nil
 }
 
-func handleNamespaceLabel(h *Handler, namespaces []string, isDel bool) error {
+func handleNamespaceLabel(h *Mesh, namespaces []string, isDel bool) error {
 	var errs []error
 	for _, ns := range namespaces {
 		if err := h.sidecarInjection(ns, isDel); err != nil {
@@ -84,13 +84,13 @@ func handleNamespaceLabel(h *Handler, namespaces []string, isDel bool) error {
 	return mergeErrors(errs)
 }
 
-func handleComponentTraefikMesh(h *Handler, comp v1alpha1.Component, isDel bool) (string, error) {
+func handleComponentTraefikMesh(h *Mesh, comp v1alpha1.Component, isDel bool) (string, error) {
 	// Get the traefik version from the settings
 	// we are sure that the version of traefik would be present
 	// because the configuration is already validated against the schema
 	version := comp.Spec.Settings["version"].(string)
 
-	msg, err := h.installTraefik(isDel, version, comp.Namespace)
+	msg, err := h.installTraefikMesh(isDel, version, comp.Namespace)
 	if err != nil {
 		return fmt.Sprintf("%s: %s", comp.Name, msg), err
 	}
@@ -99,7 +99,7 @@ func handleComponentTraefikMesh(h *Handler, comp v1alpha1.Component, isDel bool)
 }
 
 func handleTraefikCoreComponent(
-	h *Handler,
+	h *Mesh,
 	comp v1alpha1.Component,
 	isDel bool,
 	apiVersion,
