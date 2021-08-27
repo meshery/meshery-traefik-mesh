@@ -35,7 +35,7 @@ var (
 
 	// ErrApplyHelmChartCode represents the error which are generated
 	// during the process of applying helm chart
-	ErrApplyHelmChartCode = "replace_traefik_test_code"
+	ErrApplyHelmChartCode = "1012"
 
 	// ErrConvertingAppVersionToChartVersionCode represents the errors which are generated
 	// during the process of converting app version to chart version
@@ -59,6 +59,38 @@ var (
 
 	// ErrOpInvalid is an error when an invalid operation is requested
 	ErrOpInvalid = errors.New(ErrOpInvalidCode, errors.Alert, []string{"Invalid operation"}, []string{}, []string{}, []string{})
+
+	// ErrNilClientCode represents the error code which is
+	// generated when kubernetes client is nil
+	ErrNilClientCode = "1013"
+
+	// ErrInvalidOAMComponentTypeCode represents the error code which is
+	// generated when an invalid oam component is requested
+	ErrInvalidOAMComponentTypeCode = "1014"
+
+	// ErrTraefikCoreComponentFailCode represents the error code which is
+	// generated when an Traefik core operations fails
+	ErrTraefikCoreComponentFailCode = "1015"
+	// ErrProcessOAMCode represents the error code which is
+	// generated when an OAM operations fails
+	ErrProcessOAMCode = "1016"
+	// ErrParseTraefikCoreComponentCode represents the error code which is
+	// generated when Traefik core component manifest parsing fails
+	ErrParseTraefikCoreComponentCode = "1017"
+	// ErrParseOAMComponentCode represents the error code which is
+	// generated during the OAM component parsing
+	ErrParseOAMComponentCode = "1018"
+	// ErrParseOAMConfigCode represents the error code which is
+	// generated during the OAM configuration parsing
+	ErrParseOAMConfigCode = "1019"
+
+	// ErrParseOAMComponent represents the error which is
+	// generated during the OAM component parsing
+	ErrParseOAMComponent = errors.New(ErrParseOAMComponentCode, errors.Alert, []string{"error parsing the component"}, []string{"Error occured while prasing application component in the OAM request made"}, []string{"Invalid OAM component passed in OAM request"}, []string{"Check if your request has vaild OAM components"})
+
+	// ErrParseOAMConfig represents the error which is
+	// generated during the OAM configuration parsing
+	ErrParseOAMConfig = errors.New(ErrParseOAMConfigCode, errors.Alert, []string{"error parsing the configuration"}, []string{"Error occured while prasing component config in the OAM request made"}, []string{"Invalid OAM config passed in OAM request"}, []string{"Check if your request has vaild OAM config"})
 )
 
 // ErrInstallTraefik is the error for install mesh
@@ -79,11 +111,6 @@ func ErrEntryWithAppVersionNotExists(entry, appVersion string) error {
 // ErrHelmRepositoryNotFound is the error when no valid remote helm repository is found
 func ErrHelmRepositoryNotFound(repo string, err error) error {
 	return errors.New(ErrHelmRepositoryNotFoundCode, errors.Alert, []string{"Helm repo not found"}, []string{fmt.Sprintf("either the repo %s does not exists or is corrupt: %v", repo, err)}, []string{}, []string{})
-}
-
-// ErrDecodeYaml is the error when the yaml unmarshal fails
-func ErrDecodeYaml(err error) error {
-	return errors.New(ErrDecodeYamlCode, errors.Alert, []string{"Error occured while decoding YAML"}, []string{err.Error()}, []string{}, []string{})
 }
 
 // ErrMeshConfig is the error for mesh config
@@ -114,4 +141,23 @@ func ErrSampleApp(err error) error {
 // ErrCustomOperation is the error for streaming event
 func ErrCustomOperation(err error) error {
 	return errors.New(ErrCustomOperationCode, errors.Alert, []string{"Error with custom operation"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrParseTraefikCoreComponent(err error) error {
+	return errors.New(ErrParseTraefikCoreComponentCode, errors.Alert, []string{"Traefik core component manifest parsing failing"}, []string{err.Error()}, []string{}, []string{})
+}
+
+// ErrInvalidOAMComponentType is the error when the OAM component name is not valid
+func ErrInvalidOAMComponentType(compName string) error {
+	return errors.New(ErrInvalidOAMComponentTypeCode, errors.Alert, []string{"invalid OAM component name: ", compName}, []string{}, []string{}, []string{})
+}
+
+// ErrTraefikCoreComponentFail is the error when core Traefik component processing fails
+func ErrTraefikCoreComponentFail(err error) error {
+	return errors.New(ErrTraefikCoreComponentFailCode, errors.Alert, []string{"error in Traefik core component"}, []string{err.Error()}, []string{}, []string{})
+}
+
+// ErrProcessOAM is a generic error which is thrown when an OAM operations fails
+func ErrProcessOAM(err error) error {
+	return errors.New(ErrProcessOAMCode, errors.Alert, []string{"error performing OAM operations"}, []string{err.Error()}, []string{}, []string{})
 }
