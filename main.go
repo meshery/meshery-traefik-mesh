@@ -22,8 +22,8 @@ import (
 	"time"
 
 	"github.com/layer5io/meshery-traefik-mesh/traefik"
+	"github.com/layer5io/meshery-traefik-mesh/traefik/oam"
 	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshery/meshery-traefik-mesh"
 
 	// "github.com/layer5io/meshkit/tracing"
 	"github.com/layer5io/meshery-adapter-library/adapter"
@@ -52,7 +52,7 @@ func main() {
 	// Initialize Logger instance
 	log, err := logger.New(serviceName, logger.Options{
 		Format: logger.SyslogLogFormat,
-		DebugLevel: isDebug()
+		DebugLevel: isDebug(),
 	})
 	if err != nil {
 		fmt.Println(err)
