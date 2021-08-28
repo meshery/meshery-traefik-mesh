@@ -152,6 +152,7 @@ func ErrCustomOperation(err error) error {
 	return errors.New(ErrCustomOperationCode, errors.Alert, []string{"Error with custom operation"}, []string{err.Error()}, []string{}, []string{})
 }
 
+// ErrParseTraefikCoreComponent is the error when traefik core component manifest parsing fails
 func ErrParseTraefikCoreComponent(err error) error {
 	return errors.New(ErrParseTraefikCoreComponentCode, errors.Alert, []string{"Traefik core component manifest parsing failing"}, []string{err.Error()}, []string{}, []string{})
 }

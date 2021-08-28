@@ -12,7 +12,7 @@ import (
 type CompHandler func(*Mesh, v1alpha1.Component, bool) (string, error)
 
 // HandleComponents handles the processing of OAM components
-func (h *Mesh) HandleComponents(comps []v1alpha1.Component, isDel bool) (string, error) {
+func (mesh *Mesh) HandleComponents(comps []v1alpha1.Component, isDel bool) (string, error) {
 	var errs []error
 	var msgs []string
 
@@ -23,7 +23,7 @@ func (h *Mesh) HandleComponents(comps []v1alpha1.Component, isDel bool) (string,
 	for _, comp := range comps {
 		fnc, ok := compFuncMap[comp.Spec.Type]
 		if !ok {
-			msg, err := handleTraefikCoreComponent(h, comp, isDel, "", "")
+			msg, err := handleTraefikCoreComponent(mesh, comp, isDel, "", "")
 			if err != nil {
 				errs = append(errs, err)
 				continue
@@ -33,7 +33,7 @@ func (h *Mesh) HandleComponents(comps []v1alpha1.Component, isDel bool) (string,
 			continue
 		}
 
-		msg, err := fnc(h, comp, isDel)
+		msg, err := fnc(mesh, comp, isDel)
 		if err != nil {
 			errs = append(errs, err)
 			continue
@@ -50,14 +50,14 @@ func (h *Mesh) HandleComponents(comps []v1alpha1.Component, isDel bool) (string,
 }
 
 // HandleApplicationConfiguration handles the processing of OAM application configuration
-func (h *Mesh) HandleApplicationConfiguration(config v1alpha1.Configuration, isDel bool) (string, error) {
+func (mesh *Mesh) HandleApplicationConfiguration(config v1alpha1.Configuration, isDel bool) (string, error) {
 	var errs []error
 	var msgs []string
 	for _, comp := range config.Spec.Components {
 		for _, trait := range comp.Traits {
 			if trait.Name == "automaticSidecarInjection.Traefik" {
 				namespaces := castSliceInterfaceToSliceString(trait.Properties["namespaces"].([]interface{}))
-				if err := handleNamespaceLabel(h, namespaces, isDel); err != nil {
+				if err := handleNamespaceLabel(mesh, namespaces, isDel); err != nil {
 					errs = append(errs, err)
 				}
 			}
@@ -73,10 +73,10 @@ func (h *Mesh) HandleApplicationConfiguration(config v1alpha1.Configuration, isD
 	return mergeMsgs(msgs), nil
 }
 
-func handleNamespaceLabel(h *Mesh, namespaces []string, isDel bool) error {
+func handleNamespaceLabel(mesh *Mesh, namespaces []string, isDel bool) error {
 	var errs []error
 	for _, ns := range namespaces {
-		if err := h.sidecarInjection(ns, isDel); err != nil {
+		if err := mesh.sidecarInjection(ns, isDel); err != nil {
 			errs = append(errs, err)
 		}
 	}
@@ -84,13 +84,13 @@ func handleNamespaceLabel(h *Mesh, namespaces []string, isDel bool) error {
 	return mergeErrors(errs)
 }
 
-func handleComponentTraefikMesh(h *Mesh, comp v1alpha1.Component, isDel bool) (string, error) {
+func handleComponentTraefikMesh(mesh *Mesh, comp v1alpha1.Component, isDel bool) (string, error) {
 	// Get the traefik version from the settings
 	// we are sure that the version of traefik would be present
 	// because the configuration is already validated against the schema
 	version := comp.Spec.Settings["version"].(string)
 
-	msg, err := h.installTraefikMesh(isDel, version, comp.Namespace)
+	msg, err := mesh.installTraefikMesh(isDel, version, comp.Namespace)
 	if err != nil {
 		return fmt.Sprintf("%s: %s", comp.Name, msg), err
 	}
@@ -99,7 +99,7 @@ func handleComponentTraefikMesh(h *Mesh, comp v1alpha1.Component, isDel bool) (s
 }
 
 func handleTraefikCoreComponent(
-	h *Mesh,
+	mesh *Mesh,
 	comp v1alpha1.Component,
 	isDel bool,
 	apiVersion,
@@ -133,7 +133,7 @@ func handleTraefikCoreComponent(
 	yamlByt, err := yaml.Marshal(component)
 	if err != nil {
 		err = ErrParseTraefikCoreComponent(err)
-		h.Log.Error(err)
+		mesh.Log.Error(err)
 		return "", err
 	}
 
@@ -142,7 +142,7 @@ func handleTraefikCoreComponent(
 		msg = fmt.Sprintf("deleted %s config \"%s\" in namespace \"%s\"", kind, comp.Name, comp.Namespace)
 	}
 
-	return msg, h.applyManifest(yamlByt, isDel, comp.Namespace)
+	return msg, mesh.applyManifest(yamlByt, isDel, comp.Namespace)
 }
 
 func getAPIVersionFromComponent(comp v1alpha1.Component) string {

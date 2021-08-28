@@ -51,7 +51,7 @@ func init() {
 func main() {
 	// Initialize Logger instance
 	log, err := logger.New(serviceName, logger.Options{
-		Format: logger.SyslogLogFormat,
+		Format:     logger.SyslogLogFormat,
 		DebugLevel: isDebug(),
 	})
 	if err != nil {
