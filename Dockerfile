@@ -24,5 +24,6 @@ ENV GOARCH="amd64"
 ENV SERVICE_ADDR="meshery-traefik-mesh"
 ENV MESHERY_SERVER="http://meshery:9081"
 WORKDIR $HOME/.meshery
+COPY templates/ ./templates
 COPY --from=builder /build/meshery-traefik-mesh .
 ENTRYPOINT ["./meshery-traefik-mesh"]
