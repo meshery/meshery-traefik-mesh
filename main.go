@@ -71,7 +71,7 @@ func main() {
 
 	// Initialize application specific configs and dependencies
 	// App and request config
-	cfg, err := config.New(configprovider.InMemKey)
+	cfg, err := config.New(configprovider.ViperKey)
 	if err != nil {
 		log.Error(err)
 		os.Exit(1)
@@ -84,7 +84,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	kubeconfigHandler, err := config.NewKubeconfigBuilder(configprovider.InMemKey)
+	kubeconfigHandler, err := config.NewKubeconfigBuilder(configprovider.ViperKey)
 	if err != nil {
 		log.Error(err)
 		os.Exit(1)

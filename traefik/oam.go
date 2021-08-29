@@ -55,13 +55,6 @@ func (mesh *Mesh) HandleApplicationConfiguration(config v1alpha1.Configuration, 
 	var msgs []string
 	for _, comp := range config.Spec.Components {
 		for _, trait := range comp.Traits {
-			if trait.Name == "automaticSidecarInjection.Traefik" {
-				namespaces := castSliceInterfaceToSliceString(trait.Properties["namespaces"].([]interface{}))
-				if err := handleNamespaceLabel(mesh, namespaces, isDel); err != nil {
-					errs = append(errs, err)
-				}
-			}
-
 			msgs = append(msgs, fmt.Sprintf("applied trait \"%s\" on service \"%s\"", trait.Name, comp.ComponentName))
 		}
 	}
@@ -71,17 +64,6 @@ func (mesh *Mesh) HandleApplicationConfiguration(config v1alpha1.Configuration, 
 	}
 
 	return mergeMsgs(msgs), nil
-}
-
-func handleNamespaceLabel(mesh *Mesh, namespaces []string, isDel bool) error {
-	var errs []error
-	for _, ns := range namespaces {
-		if err := mesh.sidecarInjection(ns, isDel); err != nil {
-			errs = append(errs, err)
-		}
-	}
-
-	return mergeErrors(errs)
 }
 
 func handleComponentTraefikMesh(mesh *Mesh, comp v1alpha1.Component, isDel bool) (string, error) {
@@ -151,19 +133,6 @@ func getAPIVersionFromComponent(comp v1alpha1.Component) string {
 
 func getKindFromComponent(comp v1alpha1.Component) string {
 	return comp.Annotations["pattern.meshery.io.mesh.workload.k8sKind"]
-}
-
-func castSliceInterfaceToSliceString(in []interface{}) []string {
-	var out []string
-
-	for _, v := range in {
-		cast, ok := v.(string)
-		if ok {
-			out = append(out, cast)
-		}
-	}
-
-	return out
 }
 
 func mergeErrors(errs []error) error {
