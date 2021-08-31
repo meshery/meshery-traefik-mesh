@@ -12,6 +12,12 @@ import (
 	smp "github.com/layer5io/service-mesh-performance/spec"
 )
 
+const (
+	// OAM metadata constants
+	OAMAdapterNameMetadataKey       = "adapter.meshery.io/name"
+	OAMComponentCategoryMetadataKey = "ui.meshery.io/category"
+)
+
 var (
 	// TraefikMeshOperation is the default name for the install
 	// and uninstall commands on the traefik mesh

@@ -1,6 +1,7 @@
 package traefik
 
 import (
+
 	"github.com/layer5io/meshery-adapter-library/adapter"
 	"github.com/layer5io/meshery-adapter-library/status"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"

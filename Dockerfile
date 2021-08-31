@@ -21,6 +21,9 @@ RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -ldflags="-w -
 FROM gcr.io/distroless/base:nonroot-amd64
 ENV DISTRO="debian"
 ENV GOARCH="amd64"
+ENV SERVICE_ADDR="meshery-traefik-mesh"
+ENV MESHERY_SERVER="http://meshery:9081"
 WORKDIR $HOME/.meshery
+COPY templates/ ./templates
 COPY --from=builder /build/meshery-traefik-mesh .
 ENTRYPOINT ["./meshery-traefik-mesh"]
