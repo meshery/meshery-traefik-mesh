@@ -170,7 +170,7 @@ func registerDynamicCapabilities(port string, log logger.Handler) {
 
 }
 func registerWorkloads(port string, log logger.Handler) {
-	log.Info("Registering latest workload components")
+	log.Info("Registering latest pattern components")
 	// Register workloads
 	if err := oam.RegisterWorkLoadsDynamically(mesheryServerAddress(), serviceAddress()+":"+port); err != nil {
 		log.Info(err.Error())
