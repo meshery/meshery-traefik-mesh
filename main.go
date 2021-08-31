@@ -176,5 +176,5 @@ func registerWorkloads(port string, log logger.Handler) {
 		log.Info(err.Error())
 		return
 	}
-	log.Info("Latest workload components successfully registered.")
+	log.Info("Latest pattern components successfully registered.")
 }
