@@ -15,6 +15,7 @@ import (
 	"github.com/layer5io/meshery-traefik-mesh/internal/config"
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/manifests"
+	smp "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/pkg/errors"
 )
 
@@ -134,7 +135,7 @@ func RegisterWorkLoadsDynamically(runtime, host string) error {
 	}
 	fmt.Println("version ", av)
 	m := manifests.Config{
-		Name:        "Traefik",
+		Name:        smp.ServiceMesh_TRAEFIK_MESH.String(),
 		MeshVersion: av,
 		Filter: manifests.CrdFilter{
 			RootFilter:    []string{"$[?(@.kind==\"CustomResourceDefinition\")]"},

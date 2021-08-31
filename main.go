@@ -111,7 +111,7 @@ func main() {
 	go registerDynamicCapabilities(service.Port, log) //Registering latest capabilities periodically
 
 	// Server Initialization
-	log.Info("Adaptor Listening at port: ", service.Port)
+	log.Info("Adapter Listening at port: ", service.Port)
 	err = grpc.Start(service, nil)
 	if err != nil {
 		log.Error(err)
@@ -170,11 +170,11 @@ func registerDynamicCapabilities(port string, log logger.Handler) {
 
 }
 func registerWorkloads(port string, log logger.Handler) {
-	log.Info("Registering latest workload components")
+	log.Info("Registering latest pattern components")
 	// Register workloads
 	if err := oam.RegisterWorkLoadsDynamically(mesheryServerAddress(), serviceAddress()+":"+port); err != nil {
 		log.Info(err.Error())
 		return
 	}
-	log.Info("Latest workload components successfully registered.")
+	log.Info("Latest pattern components successfully registered.")
 }
