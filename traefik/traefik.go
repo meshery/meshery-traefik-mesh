@@ -7,7 +7,7 @@ import (
 
 	"github.com/layer5io/meshery-adapter-library/adapter"
 	"github.com/layer5io/meshery-adapter-library/common"
-	adapterconfig "github.com/layer5io/meshery-adapter-library/config"
+	meshkitCfg "github.com/layer5io/meshkit/config"
 	"github.com/layer5io/meshery-adapter-library/status"
 	internalConfig "github.com/layer5io/meshery-traefik-mesh/internal/config"
 	"github.com/layer5io/meshery-traefik-mesh/traefik/oam"
@@ -26,7 +26,7 @@ type Mesh struct {
 }
 
 // New initializes treafik-mesh handler.
-func New(c adapterconfig.Handler, l logger.Handler, kc adapterconfig.Handler) adapter.Handler {
+func New(c meshkitCfg.Handler, l logger.Handler, kc meshkitCfg.Handler) adapter.Handler {
 	return &Mesh{
 		Adapter: adapter.Adapter{
 			Config:            c,
