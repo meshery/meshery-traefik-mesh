@@ -21,15 +21,15 @@ import (
 const (
 	// ErrEmptyConfigCode represents the error when the configuration is either empty
 	// or is invalid
-	ErrEmptyConfigCode = "replace_traefik_test_code"
+	ErrEmptyConfigCode = "1029"
 
 	// ErrGetLatestReleasesCode represents the error which occurs during the process of getting
 	// latest releases
-	ErrGetLatestReleasesCode = "replace_traefik_test_code"
+	ErrGetLatestReleasesCode = "1030"
 
 	// ErrGetLatestReleaseNamesCode represents the error which occurs during the process of extracting
 	// release names
-	ErrGetLatestReleaseNamesCode = "replace_traefik_test_code"
+	ErrGetLatestReleaseNamesCode = "1031"
 )
 
 var (
