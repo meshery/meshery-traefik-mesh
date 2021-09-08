@@ -208,7 +208,7 @@ func registerWorkloads(port string, log logger.Handler) {
 func getLatestValidAppVersionAndChartVersion() (string, string, error) {
 	release, err := config.GetLatestReleases(100)
 	if err != nil {
-		return "", "", err
+		return "", "", config.ErrGetLatestReleases(err)
 	}
 	//loops through latest  app versions untill it finds one which is available in helm chart's index.yaml
 	for _, rel := range release {
@@ -217,5 +217,5 @@ func getLatestValidAppVersionAndChartVersion() (string, string, error) {
 		}
 
 	}
-	return "", "", err
+	return "", "", config.ErrGetLatestReleases(err)
 }
