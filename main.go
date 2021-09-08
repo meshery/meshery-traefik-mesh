@@ -28,7 +28,7 @@ import (
 	// "github.com/layer5io/meshkit/tracing"
 	"github.com/layer5io/meshery-adapter-library/adapter"
 	"github.com/layer5io/meshery-adapter-library/api/grpc"
-	configprovider "github.com/layer5io/meshery-adapter-library/config/provider"
+	configprovider "github.com/layer5io/meshkit/config/provider"
 	"github.com/layer5io/meshery-traefik-mesh/internal/config"
 )
 
