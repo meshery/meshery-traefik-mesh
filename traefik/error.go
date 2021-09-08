@@ -11,27 +11,27 @@ var (
 
 	// ErrInstallTraefikCode represents the errors which are generated
 	// during traefik mesh install process
-	ErrInstallTraefikCode = "replace_traefik_test_code"
+	ErrInstallTraefikCode = "1032"
 
 	// ErrCreatingHelmIndexCode represents the errors which are generated
 	// during creation of helm index
-	ErrCreatingHelmIndexCode = "replace_traefik_test_code"
+	ErrCreatingHelmIndexCode = "1033"
 
 	// ErrEntryWithAppVersionNotExistsCode represents the error which is generated
 	// when no entry is found with specified name and app version
-	ErrEntryWithAppVersionNotExistsCode = "replace_traefik_test_code"
+	ErrEntryWithAppVersionNotExistsCode = "1034"
 
 	// ErrHelmRepositoryNotFoundCode represents the error which is generated when
 	// no valid helm repository is found
-	ErrHelmRepositoryNotFoundCode = "replace_traefik_test_code"
+	ErrHelmRepositoryNotFoundCode = "1035"
 
 	// ErrDecodeYamlCode represents the error which is generated when yaml
 	// decode process fails
-	ErrDecodeYamlCode = "replace_traefik_test_code"
+	ErrDecodeYamlCode = "1036"
 
 	// ErrMeshConfigCode represents the errors which are generated
 	// when an invalid mesh config is found
-	ErrMeshConfigCode = "replace_traefik_test_code"
+	ErrMeshConfigCode = "1037"
 
 	// ErrApplyHelmChartCode represents the error which are generated
 	// during the process of applying helm chart
@@ -39,23 +39,23 @@ var (
 
 	// ErrConvertingAppVersionToChartVersionCode represents the errors which are generated
 	// during the process of converting app version to chart version
-	ErrConvertingAppVersionToChartVersionCode = "replace_traefik_test_code"
+	ErrConvertingAppVersionToChartVersionCode = "1038"
 
 	// ErrCreatingTraefikMeshClientCode represents the errors which are generated
 	// during creating traefik client process
-	ErrCreatingTraefikMeshClientCode = "replace_traefik_test_code"
+	ErrCreatingTraefikMeshClientCode = "1039"
 
 	// ErrSampleAppCode represents the errors which are generated
 	// duing sample app installation
-	ErrSampleAppCode = "replace_traefik_test_code"
+	ErrSampleAppCode = "1040"
 
 	// ErrCustomOperationCode represents the errors which are generated
 	// when an invalid addon operation is requested
-	ErrCustomOperationCode = "replace_traefik_test_code"
+	ErrCustomOperationCode = "1041"
 
 	// ErrOpInvalidCode represents the error code which are generated
 	// when an invalid operation is requested
-	ErrOpInvalidCode = "replace_traefik_test_code"
+	ErrOpInvalidCode = "1042"
 
 	// ErrOpInvalid is an error when an invalid operation is requested
 	ErrOpInvalid = errors.New(ErrOpInvalidCode, errors.Alert, []string{"Invalid operation"}, []string{}, []string{}, []string{})
