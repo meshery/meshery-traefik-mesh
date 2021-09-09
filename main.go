@@ -182,7 +182,7 @@ func registerWorkloads(port string, log logger.Handler) {
 	log.Info("Registering latest workload components for version ", appVersion)
 	// Register workloads
 	if err := adapter.RegisterWorkLoadsDynamically(mesheryServerAddress(), serviceAddress()+":"+port, &adapter.DynamicComponentsConfig{
-		TimeoutInMinutes: 30,
+		TimeoutInMinutes: 60,
 		URL:              "https://helm.traefik.io/mesh/maesh-" + chartVersion + ".tgz",
 		GenerationMethod: adapter.HelmCHARTS,
 		Config: manifests.Config{
