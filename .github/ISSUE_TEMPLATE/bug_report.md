@@ -20,6 +20,7 @@ assignees: ''
 - **Platform:** Docker or Kubernetes
 - **Meshery Server Version:** stable-v
 - **Meshery Client Version:** stable-v
+- **Meshery Adapter Version:** stable-v
 
 <!-- Optional 
 #### To Reproduce
