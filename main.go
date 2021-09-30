@@ -16,6 +16,8 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"os"
 	"path"
 	"strings"
@@ -24,8 +26,8 @@ import (
 	"github.com/layer5io/meshery-traefik-mesh/traefik"
 	"github.com/layer5io/meshery-traefik-mesh/traefik/oam"
 	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/manifests"
+	"gopkg.in/yaml.v2"
 
 	// "github.com/layer5io/meshkit/tracing"
 	"github.com/layer5io/meshery-adapter-library/adapter"
@@ -176,14 +178,14 @@ func registerDynamicCapabilities(port string, log logger.Handler) {
 func registerWorkloads(port string, log logger.Handler) {
 	appVersion, chartVersion, err := getLatestValidAppVersionAndChartVersion()
 	if err != nil {
-		log.Info("Could not get latest version")
+		log.Info(err)
 		return
 	}
 	log.Info("Registering latest workload components for version ", appVersion)
 	// Register workloads
 	if err := adapter.RegisterWorkLoadsDynamically(mesheryServerAddress(), serviceAddress()+":"+port, &adapter.DynamicComponentsConfig{
 		TimeoutInMinutes: 60,
-		URL:              "https://helm.traefik.io/mesh/maesh-" + chartVersion + ".tgz",
+		URL:              "https://helm.traefik.io/traefik/traefik-" + chartVersion + ".tgz",
 		GenerationMethod: adapter.HelmCHARTS,
 		Config: manifests.Config{
 			Name:        smp.ServiceMesh_Type_name[int32(smp.ServiceMesh_TRAEFIK_MESH)],
@@ -210,16 +212,29 @@ func registerWorkloads(port string, log logger.Handler) {
 
 // returns latest valid appversion and chartversion
 func getLatestValidAppVersionAndChartVersion() (string, string, error) {
-	release, err := config.GetLatestReleases(100)
+	res, err := http.Get("https://helm.traefik.io/traefik/index.yaml")
 	if err != nil {
 		return "", "", config.ErrGetLatestReleases(err)
 	}
-	//loops through latest  app versions untill it finds one which is available in helm chart's index.yaml
-	for _, rel := range release {
-		if chartVersion, err := kubernetes.HelmAppVersionToChartVersion("https://helm.traefik.io/mesh", "maesh", rel.TagName); err == nil {
-			return rel.TagName, chartVersion, nil
-		}
-
+	content, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return "", "", config.ErrGetLatestReleases(err)
 	}
-	return "", "", config.ErrGetLatestReleases(err)
+	var h helmIndex
+	err = yaml.Unmarshal(content, &h)
+	if err != nil {
+		return "", "", config.ErrGetLatestReleases(err)
+	}
+
+	return h.Entries["traefik"][0].AppVersion, h.Entries["traefik"][0].Version, nil
+}
+
+// Below structs are helper structs to unmarshall and extract certain fields from helm chart's index.yaml
+type helmIndex struct {
+	Entries map[string][]data `yaml:"entries"`
+}
+
+type data struct {
+	AppVersion string `yaml:"appVersion"`
+	Version    string `yaml:"version"`
 }
