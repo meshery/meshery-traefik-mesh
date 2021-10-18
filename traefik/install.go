@@ -2,6 +2,7 @@ package traefik
 
 import (
 	"fmt"
+
 	"github.com/layer5io/meshery-adapter-library/adapter"
 	"github.com/layer5io/meshery-adapter-library/status"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -40,7 +41,12 @@ func (mesh *Mesh) applyHelmChart(del bool, version, namespace string) error {
 
 	repo := "https://helm.traefik.io/mesh"
 	chart := "traefik-mesh"
-
+	var act mesherykube.HelmChartAction
+	if del {
+		act = mesherykube.UNINSTALL
+	} else {
+		act = mesherykube.INSTALL
+	}
 	return kClient.ApplyHelmChart(mesherykube.ApplyHelmChartConfig{
 		ChartLocation: mesherykube.HelmChartLocation{
 			Repository: repo,
@@ -48,7 +54,7 @@ func (mesh *Mesh) applyHelmChart(del bool, version, namespace string) error {
 			AppVersion: version,
 		},
 		Namespace:       namespace,
-		Delete:          del,
+		Action:          act,
 		CreateNamespace: true,
 	})
 }
