@@ -1,0 +1,47 @@
+name: Test TraefikMesh Adapter
+
+on:
+  push:
+    branches:
+      - "*"
+    tags:
+      - "v*"
+  pull_request:
+    branches:
+      - "*"
+jobs:
+  SetPatterfile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Get latest release tag
+        id: gettag
+        uses: pozetroninc/github-action-get-latest-release@master
+        with:
+          repository: traefik/mesh
+          excludes: prerelease, draft
+      - name: Change service mesh version in patternfile
+        run: | 
+           
+           yq e -i '.services.traefik.settings.version="${{ steps.gettag.outputs.release }}"' ./.github/install/deploy.yaml 
+           cat ./.github/install/deploy.yaml
+      - name: Uploading file
+        uses: actions/upload-artifact@v2
+        with:
+          name: patternfile
+          path: ./.github/install/deploy.yaml 
+
+  TestTraefik:
+    needs: SetPatterfile
+    uses: meshery/meshery/.github/workflows/testadapters.yaml@master
+    with:
+      expected_pods: grafana-core,jaeger,prometheus-core,traefik-mesh-controller,traefik-mesh-proxy
+      expected_pods_namespaces: traefik,traefik,traefik,traefik,traefik
+      deployment_url: https://raw.githubusercontent.com/meshery/meshery/master/install/deployment_yamls/k8s/meshery-traefik-mesh-deployment.yaml
+      service_url: https://raw.githubusercontent.com/meshery/meshery/master/install/deployment_yamls/k8s/meshery-traefik-mesh-service.yaml
+      adapter_name: traefik
+      patternfile_name: deploy.yaml
+      provider: Local
+    secrets:
+      token: ${{ secrets.PROVIDER_TOKEN }} 
