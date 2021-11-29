@@ -1,0 +1,7 @@
+name: TraefikMesh
+services:
+  traefik:
+    type: TraefikMesh
+    namespace: traefik
+    settings:
+      version:  #will be inserted dynamically
