@@ -90,9 +90,9 @@ UpdateDocs:
           service-mesh: traefik-mesh
           service-mesh-version: $(jq '.metadata.service_mesh_version' data.json)
           tests:
-            # osm-bootstrap: $(jq '.pods_status."osm-bootstrap"' data.json)
-            # osm-controller: $(jq '.pods_status."osm-controller"' data.json)
-            # osm-injector:  $(jq '.pods_status."osm-injector"' data.json)
+            osm-bootstrap: $(jq '.pods_status."osm-bootstrap"' data.json)
+            osm-controller: $(jq '.pods_status."osm-controller"' data.json)
+            osm-injector:  $(jq '.pods_status."osm-injector"' data.json)
           overall-status: $(jq '."overall-status"' data.json)
           ---" >  test.md
           mv test.md $filename.md
