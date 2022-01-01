@@ -31,7 +31,7 @@ type Asset struct {
 // limited by the "limit" parameter. It filters out all the rc
 // releases and sorts the result lexographically (descending)
 func getLatestReleaseNames(limit int) ([]adapter.Version, error) {
-	releases, err := GetLatestReleases(10)
+	releases, err := GetLatestReleases()
 	if err != nil {
 		return []adapter.Version{}, ErrGetLatestReleaseNames(err)
 	}
@@ -63,8 +63,9 @@ func getLatestReleaseNames(limit int) ([]adapter.Version, error) {
 }
 
 // GetLatestReleases fetches the latest releases from the traefik mesh repository
-func GetLatestReleases(releases uint) ([]*Release, error) {
-	releaseAPIURL := "https://api.github.com/repos/traefik/mesh/releases?per_page=" + fmt.Sprint(releases)
+func GetLatestReleases() ([]*Release, error) {
+	// Making the results to 10 to avoid fetching lot of releases (to avoid CWE-88)
+	const releaseAPIURL = "https://api.github.com/repos/traefik/mesh/releases?per_page=10"
 	// We need a variable url here hence using nosec
 	// #nosec
 	resp, err := http.Get(releaseAPIURL)
