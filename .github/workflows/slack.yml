@@ -1,16 +1,16 @@
-name: Slack Notify on Star
+name: Slack Notify on Good First Issue
 on: watch
 jobs:
-  star-notify:
-    name: Notify Slack on star
+  goodfirstissue-notify:
+    name: Notify Slack on Good First Issue
     runs-on: ubuntu-latest
     steps:
-    - name: Get current star count
+    - name: Get current Good First Issue count
       run: |
-        echo "STARS=$(curl --silent 'https://api.github.com/repos/meshery/meshery-traefik-mesh' -H 'Accept: application/vnd.github.preview' | jq '.stargazers_count')" >> $GITHUB_ENV
+        echo "GOOD FIRST ISSUE=$(curl --silent 'https://api.github.com/repos/meshery/meshery-traefik-mesh' -H 'Accept: application/vnd.github.preview' | jq '.good%20first%20issue')" >> $GITHUB_ENV
     - name: Notify slack
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       uses: pullreminders/slack-action@master
       with:
-        args: '{\"channel\":\"CSK7N9TGX\",\"text\":\"${{ github.actor }} just starred Meshery Adapter for Traefik Mesh! (https://github.com/meshery/meshery-traefik-mesh/stargazers) Total ⭐️: ${{env.STARS}}\"}'
+        args: '{\"channel\":\"CSK7N9TGX\",\"text\":\"${{ github.actor }} just opened a new issue on Meshery Adapter for Traefik Mesh! (https://github.com/meshery/meshery-traefik-mesh/labels/good%20first%20issue) : ${{env.STARS}}\"}'
