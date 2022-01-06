@@ -39,7 +39,7 @@ import (
 
 var (
 	serviceName = "traefik-mesh-adaptor"
-	version     = "none"
+	version     = "edge"
 	gitsha      = "none"
 )
 
