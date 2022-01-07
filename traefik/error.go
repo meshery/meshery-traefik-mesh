@@ -86,7 +86,7 @@ var (
 
 	// ErrNilClient represents the error which is
 	// generated when kubernetes client is nil
-	ErrNilClient = errors.New(ErrNilClientCode, errors.Alert, []string{"kubernetes client not initialized"}, []string{"Kubernetes client is nil"}, []string{"kubernetes client not initialized"}, []string{"Reconnect the adaptor to Meshery server"})
+	ErrNilClient = errors.New(ErrNilClientCode, errors.Alert, []string{"kubernetes client not initialized"}, []string{"Kubernetes client is nil"}, []string{"kubernetes client not initialized"}, []string{"Reconnect the adapter to Meshery server"})
 
 	// ErrParseOAMComponent represents the error which is
 	// generated during the OAM component parsing
