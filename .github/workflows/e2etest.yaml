@@ -106,8 +106,8 @@ jobs:
             service-mesh: traefik-mesh
             service-mesh-version: $(jq '.metadata.service_mesh_version' data.json)
             tests:
-              traefik-mesh-controller: $(jq '.pods_status."traefik-mesh-controller' data.json)
-              traefik-mesh-proxy: $(jq '.pods_status."traefik-mesh-proxy' data.json)
+              traefik-mesh-controller: $(jq '.pods_status."traefik-mesh-controller"' data.json)
+              traefik-mesh-proxy: $(jq '.pods_status."traefik-mesh-proxy"' data.json)
               grafana-core:  $(jq '.pods_status."grafana-core"' data.json)
               jaeger: $(jq '.pods_status."jaeger"' data.json)
               prometheus-core: $(jq '.pods_status."prometheus-core"' data.json) 
