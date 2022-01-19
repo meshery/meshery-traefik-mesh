@@ -39,8 +39,6 @@ func NewConfig(version string) manifests.Config {
 
 // returns latest valid appversion and chartversion
 func getLatestValidAppVersionAndChartVersion() (string, string, error) {
-	wd, _ := os.Getwd()
-	WorkloadPath = filepath.Join(wd, "templates", "oam", "workloads")
 	res, err := http.Get("https://helm.traefik.io/traefik/index.yaml")
 	if err != nil {
 		return "", "", config.ErrGetLatestReleases(err)
@@ -69,6 +67,8 @@ type data struct {
 }
 
 func init() {
+	wd, _ := os.Getwd()
+	WorkloadPath = filepath.Join(wd, "templates", "oam", "workloads")
 	var chartv string
 	DefaultVersion, chartv, _ = getLatestValidAppVersionAndChartVersion()
 	DefaultURL = "https://helm.traefik.io/traefik/traefik-" + chartv + ".tgz"
