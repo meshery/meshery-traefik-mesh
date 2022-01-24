@@ -1,4 +1,4 @@
-FROM golang:1.15 as builder
+FROM golang:1.17 as builder
 
 ARG VERSION
 ARG GIT_COMMITSHA
@@ -13,6 +13,7 @@ RUN GOPROXY=https://proxy.golang.org,direct go mod download
 COPY main.go main.go
 COPY internal/ internal/
 COPY traefik/ traefik/
+COPY build/ build/
 # Build
 RUN GOPROXY=https://proxy.golang.org,direct CGO_ENABLED=1 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -ldflags="-w -s -X main.version=$VERSION -X main.gitsha=$GIT_COMMITSHA" -a -o meshery-traefik-mesh main.go
 
