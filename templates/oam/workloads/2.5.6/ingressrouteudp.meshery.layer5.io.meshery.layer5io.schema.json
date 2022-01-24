@@ -1,0 +1,58 @@
+{
+ "description": "IngressRouteUDPSpec is a specification for a IngressRouteUDPSpec resource.",
+ "properties": {
+  "entryPoints": {
+   "items": {
+    "type": "string"
+   },
+   "type": "array"
+  },
+  "routes": {
+   "items": {
+    "description": "RouteUDP contains the set of routes.",
+    "properties": {
+     "services": {
+      "items": {
+       "description": "ServiceUDP defines an upstream to proxy traffic.",
+       "properties": {
+        "name": {
+         "type": "string"
+        },
+        "namespace": {
+         "type": "string"
+        },
+        "port": {
+         "anyOf": [
+          {
+           "type": "integer"
+          },
+          {
+           "type": "string"
+          }
+         ],
+         "x-kubernetes-int-or-string": true
+        },
+        "weight": {
+         "type": "integer"
+        }
+       },
+       "required": [
+        "name",
+        "port"
+       ],
+       "type": "object"
+      },
+      "type": "array"
+     }
+    },
+    "type": "object"
+   },
+   "type": "array"
+  }
+ },
+ "required": [
+  "routes"
+ ],
+ "title": "Ingress Route UDP",
+ "type": "object"
+}

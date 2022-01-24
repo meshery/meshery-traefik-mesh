@@ -1,0 +1,19 @@
+{
+ "description": "MiddlewareTCPSpec holds the MiddlewareTCP configuration.",
+ "properties": {
+  "ipWhiteList": {
+   "description": "TCPIPWhiteList holds the TCP ip white list configuration.",
+   "properties": {
+    "sourceRange": {
+     "items": {
+      "type": "string"
+     },
+     "type": "array"
+    }
+   },
+   "type": "object"
+  }
+ },
+ "title": "Middleware TCP",
+ "type": "object"
+}
