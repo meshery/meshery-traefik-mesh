@@ -2,19 +2,19 @@
  "kind": "WorkloadDefinition",
  "apiVersion": "core.oam.dev/v1alpha1",
  "metadata": {
-  "name": "IngressRouteUDP",
+  "name": "TrafficSplit",
   "creationTimestamp": null
  },
  "spec": {
   "definitionRef": {
-   "name": "ingressrouteudp.meshery.layer5.io"
+   "name": "trafficsplit.meshery.layer5.io"
   },
   "metadata": {
    "@type": "pattern.meshery.io/mesh/workload",
-   "k8sAPIVersion": "traefik.containo.us/v1alpha1",
-   "k8sKind": "IngressRouteUDP",
+   "k8sAPIVersion": "split.smi-spec.io/v1alpha4",
+   "k8sKind": "TrafficSplit",
    "meshName": "TRAEFIK_MESH",
-   "meshVersion": "2.5.6"
+   "meshVersion": "v1.4.5"
   }
  }
 }
