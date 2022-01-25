@@ -192,16 +192,21 @@ func registerWorkloads(port string, log logger.Handler) {
 
 	log.Info("Registering latest workload components for version ", version)
 	// Register workloads
-	if err := adapter.CreateComponents(adapter.StaticCompConfig{
-		URL:     url,
-		Method:  gm,
-		Path:    build.WorkloadPath,
-		DirName: version,
-		Config:  build.NewConfig(version),
-	}); err != nil {
-		log.Info(err.Error())
-		return
+	for _, crd := range build.CRDNames {
+		crdurl := url + crd
+		log.Info("Registering ", crdurl)
+		if err := adapter.CreateComponents(adapter.StaticCompConfig{
+			URL:     crdurl,
+			Method:  gm,
+			Path:    build.WorkloadPath,
+			DirName: version,
+			Config:  build.NewConfig(version),
+		}); err != nil {
+			log.Info(err.Error())
+			return
+		}
 	}
+
 	//The below log is checked in the workflows. If you change this log, reflect that change in the workflow where components are generated
 	log.Info("Component creation completed for version ", version)
 
