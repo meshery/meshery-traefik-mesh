@@ -7,6 +7,5 @@ updates:
   open-pull-requests-limit: 5
   reviewers:
     - Revolyssup
-    - DelusionalOptimist
   labels:
     - "dependencies"
