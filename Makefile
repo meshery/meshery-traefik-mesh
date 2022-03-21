@@ -16,6 +16,7 @@ docker-run:
 	layer5/meshery-traefik-mesh
 
 run:
+	go mod tidy; \
 	DEBUG=true go run main.go
 
 
