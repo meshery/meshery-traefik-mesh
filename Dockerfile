@@ -15,7 +15,7 @@ COPY internal/ internal/
 COPY traefik/ traefik/
 COPY build/ build/
 # Build
-RUN GOPROXY=https://proxy.golang.org,direct CGO_ENABLED=1 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -ldflags="-w -s -X main.version=$VERSION -X main.gitsha=$GIT_COMMITSHA" -a -o meshery-traefik-mesh main.go
+RUN GOPROXY=https://proxy.golang.org,direct CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -ldflags="-w -s -X main.version=$VERSION -X main.gitsha=$GIT_COMMITSHA" -a -o meshery-traefik-mesh main.go
 
 FROM alpine:3.14 as jsonschema-util
 RUN apk add --no-cache curl
