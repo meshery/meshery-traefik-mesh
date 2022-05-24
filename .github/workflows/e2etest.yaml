@@ -109,11 +109,11 @@ jobs:
             service-mesh: traefik-mesh
             service-mesh-version: $(jq '.metadata.service_mesh_version' data.json)
             tests:
-              traefik-mesh-controller: $(jq '.resources_status."pod/traefik-mesh-controller"' data.json)
-              traefik-mesh-proxy: $(jq '.resources_status."pod/traefik-mesh-proxy"' data.json)
-              grafana-core:  $(jq '.resources_status."pod/grafana-core"' data.json)
-              jaeger: $(jq '.resources_status."pod/jaeger"' data.json)
-              prometheus-core: $(jq '.resources_status."pod/prometheus-core"' data.json) 
+              pod/traefik-mesh-controller: $(jq '.resources_status."pod/traefik-mesh-controller"' data.json)
+              pod/traefik-mesh-proxy: $(jq '.resources_status."pod/traefik-mesh-proxy"' data.json)
+              pod/grafana-core:  $(jq '.resources_status."pod/grafana-core"' data.json)
+              pod/jaeger: $(jq '.resources_status."pod/jaeger"' data.json)
+              pod/prometheus-core: $(jq '.resources_status."pod/prometheus-core"' data.json) 
             overall-status: $(jq '."overall-status"' data.json)
             ---" >  test.md
             mv test.md $filename.md
