@@ -46,10 +46,11 @@ jobs:
 
   TestTraefik:
     needs: SetPatterfile
-    uses: meshery/meshery/.github/workflows/testadapters.yaml@master
+    uses: meshery/meshery/.github/workflows/test_adapters.yaml@master
     with:
-      expected_pods: grafana-core,jaeger,prometheus-core,traefik-mesh-controller,traefik-mesh-proxy
-      expected_pods_namespaces: traefik,traefik,traefik,traefik,traefik
+      expected_resources: grafana-core,jaeger,prometheus-core,traefik-mesh-controller,traefik-mesh-proxy
+      expected_resources_types: pod,pod,pod,pod,pod
+      expected_resources_namespaces: traefik,traefik,traefik,traefik,traefik
       deployment_url: https://raw.githubusercontent.com/meshery/meshery/master/install/deployment_yamls/k8s/meshery-traefik-mesh-deployment.yaml
       service_url: https://raw.githubusercontent.com/meshery/meshery/master/install/deployment_yamls/k8s/meshery-traefik-mesh-service.yaml
       adapter_name: traefik
@@ -108,11 +109,11 @@ jobs:
             service-mesh: traefik-mesh
             service-mesh-version: $(jq '.metadata.service_mesh_version' data.json)
             tests:
-              traefik-mesh-controller: $(jq '.pods_status."traefik-mesh-controller"' data.json)
-              traefik-mesh-proxy: $(jq '.pods_status."traefik-mesh-proxy"' data.json)
-              grafana-core:  $(jq '.pods_status."grafana-core"' data.json)
-              jaeger: $(jq '.pods_status."jaeger"' data.json)
-              prometheus-core: $(jq '.pods_status."prometheus-core"' data.json) 
+              traefik-mesh-controller: $(jq '.resources_status."pod/traefik-mesh-controller"' data.json)
+              traefik-mesh-proxy: $(jq '.resources_status."pod/traefik-mesh-proxy"' data.json)
+              grafana-core:  $(jq '.resources_status."pod/grafana-core"' data.json)
+              jaeger: $(jq '.resources_status."pod/jaeger"' data.json)
+              prometheus-core: $(jq '.resources_status."pod/prometheus-core"' data.json) 
             overall-status: $(jq '."overall-status"' data.json)
             ---" >  test.md
             mv test.md $filename.md
