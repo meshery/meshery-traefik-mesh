@@ -9,10 +9,10 @@ import (
 )
 
 // CompHandler is the type for functions which can handle OAM components
-type CompHandler func(*Mesh, v1alpha1.Component, bool) (string, error)
+type CompHandler func(*Mesh, v1alpha1.Component, bool, []string) (string, error)
 
 // HandleComponents handles the processing of OAM components
-func (mesh *Mesh) HandleComponents(comps []v1alpha1.Component, isDel bool) (string, error) {
+func (mesh *Mesh) HandleComponents(comps []v1alpha1.Component, isDel bool, kubeconfigs []string) (string, error) {
 	var errs []error
 	var msgs []string
 
@@ -23,7 +23,7 @@ func (mesh *Mesh) HandleComponents(comps []v1alpha1.Component, isDel bool) (stri
 	for _, comp := range comps {
 		fnc, ok := compFuncMap[comp.Spec.Type]
 		if !ok {
-			msg, err := handleTraefikCoreComponent(mesh, comp, isDel, "", "")
+			msg, err := handleTraefikCoreComponent(mesh, comp, isDel, "", "", kubeconfigs)
 			if err != nil {
 				errs = append(errs, err)
 				continue
@@ -33,7 +33,7 @@ func (mesh *Mesh) HandleComponents(comps []v1alpha1.Component, isDel bool) (stri
 			continue
 		}
 
-		msg, err := fnc(mesh, comp, isDel)
+		msg, err := fnc(mesh, comp, isDel, kubeconfigs)
 		if err != nil {
 			errs = append(errs, err)
 			continue
@@ -50,7 +50,7 @@ func (mesh *Mesh) HandleComponents(comps []v1alpha1.Component, isDel bool) (stri
 }
 
 // HandleApplicationConfiguration handles the processing of OAM application configuration
-func (mesh *Mesh) HandleApplicationConfiguration(config v1alpha1.Configuration, isDel bool) (string, error) {
+func (mesh *Mesh) HandleApplicationConfiguration(config v1alpha1.Configuration, isDel bool, kubeconfigs []string) (string, error) {
 	var errs []error
 	var msgs []string
 	for _, comp := range config.Spec.Components {
@@ -66,13 +66,13 @@ func (mesh *Mesh) HandleApplicationConfiguration(config v1alpha1.Configuration, 
 	return mergeMsgs(msgs), nil
 }
 
-func handleComponentTraefikMesh(mesh *Mesh, comp v1alpha1.Component, isDel bool) (string, error) {
+func handleComponentTraefikMesh(mesh *Mesh, comp v1alpha1.Component, isDel bool, kubeconfigs []string) (string, error) {
 	// Get the traefik version from the settings
 	// we are sure that the version of traefik would be present
 	// because the configuration is already validated against the schema
 	version := comp.Spec.Settings["version"].(string)
 
-	msg, err := mesh.installTraefikMesh(isDel, version, comp.Namespace)
+	msg, err := mesh.installTraefikMesh(isDel, version, comp.Namespace, kubeconfigs)
 	if err != nil {
 		return fmt.Sprintf("%s: %s", comp.Name, msg), err
 	}
@@ -85,7 +85,8 @@ func handleTraefikCoreComponent(
 	comp v1alpha1.Component,
 	isDel bool,
 	apiVersion,
-	kind string) (string, error) {
+	kind string,
+	kubeconfigs []string) (string, error) {
 	if apiVersion == "" {
 		apiVersion = getAPIVersionFromComponent(comp)
 		if apiVersion == "" {
@@ -124,7 +125,7 @@ func handleTraefikCoreComponent(
 		msg = fmt.Sprintf("deleted %s config \"%s\" in namespace \"%s\"", kind, comp.Name, comp.Namespace)
 	}
 
-	return msg, mesh.applyManifest(yamlByt, isDel, comp.Namespace)
+	return msg, mesh.applyManifest(yamlByt, isDel, comp.Namespace, kubeconfigs)
 }
 
 func getAPIVersionFromComponent(comp v1alpha1.Component) string {

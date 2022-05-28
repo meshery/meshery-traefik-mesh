@@ -7,10 +7,10 @@ import (
 
 	"github.com/layer5io/meshery-adapter-library/adapter"
 	"github.com/layer5io/meshery-adapter-library/common"
-	meshkitCfg "github.com/layer5io/meshkit/config"
 	"github.com/layer5io/meshery-adapter-library/status"
 	internalConfig "github.com/layer5io/meshery-traefik-mesh/internal/config"
 	"github.com/layer5io/meshery-traefik-mesh/traefik/oam"
+	meshkitCfg "github.com/layer5io/meshkit/config"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 )
@@ -29,15 +29,16 @@ type Mesh struct {
 func New(c meshkitCfg.Handler, l logger.Handler, kc meshkitCfg.Handler) adapter.Handler {
 	return &Mesh{
 		Adapter: adapter.Adapter{
-			Config:            c,
-			Log:               l,
-			KubeconfigHandler: kc,
+			Config: c,
+			Log:    l,
 		},
 	}
 }
 
 // ApplyOperation applies the operation on traefik mesh
-func (mesh *Mesh) ApplyOperation(ctx context.Context, opReq adapter.OperationRequest) error {
+func (mesh *Mesh) ApplyOperation(ctx context.Context, opReq adapter.OperationRequest, hchan *chan interface{}) error {
+	mesh.SetChannel(hchan)
+	kubeconfigs := opReq.K8sConfigs
 	operations := make(adapter.Operations)
 	err := mesh.Config.GetObject(adapter.OperationsKey, &operations)
 	if err != nil {
@@ -54,7 +55,7 @@ func (mesh *Mesh) ApplyOperation(ctx context.Context, opReq adapter.OperationReq
 	case internalConfig.TraefikMeshOperation:
 		go func(hh *Mesh, ee *adapter.Event) {
 			version := string(operations[opReq.OperationName].Versions[0])
-			stat, err := hh.installTraefikMesh(opReq.IsDeleteOperation, version, opReq.Namespace)
+			stat, err := hh.installTraefikMesh(opReq.IsDeleteOperation, version, opReq.Namespace, kubeconfigs)
 			if err != nil {
 				e.Summary = fmt.Sprintf("Error while %s Traefik service mesh", stat)
 				e.Details = err.Error()
@@ -68,7 +69,7 @@ func (mesh *Mesh) ApplyOperation(ctx context.Context, opReq adapter.OperationReq
 	case common.BookInfoOperation, common.HTTPBinOperation, common.ImageHubOperation, common.EmojiVotoOperation:
 		go func(hh *Mesh, ee *adapter.Event) {
 			appName := operations[opReq.OperationName].AdditionalProperties[common.ServiceName]
-			stat, err := hh.installSampleApp(opReq.Namespace, opReq.IsDeleteOperation, operations[opReq.OperationName].Templates)
+			stat, err := hh.installSampleApp(opReq.Namespace, opReq.IsDeleteOperation, operations[opReq.OperationName].Templates, kubeconfigs)
 			if err != nil {
 				e.Summary = fmt.Sprintf("Error while %s %s application", stat, appName)
 				e.Details = err.Error()
@@ -81,7 +82,7 @@ func (mesh *Mesh) ApplyOperation(ctx context.Context, opReq adapter.OperationReq
 		}(mesh, e)
 	case common.CustomOperation:
 		go func(hh *Mesh, ee *adapter.Event) {
-			stat, err := hh.applyCustomOperation(opReq.Namespace, opReq.CustomBody, opReq.IsDeleteOperation)
+			stat, err := hh.applyCustomOperation(opReq.Namespace, opReq.CustomBody, opReq.IsDeleteOperation, kubeconfigs)
 			if err != nil {
 				e.Summary = fmt.Sprintf("Error while %s custom operation", stat)
 				e.Details = err.Error()
@@ -102,6 +103,7 @@ func (mesh *Mesh) ApplyOperation(ctx context.Context, opReq adapter.OperationReq
 				Namespace:   "meshery",
 				Labels:      make(map[string]string),
 				Annotations: make(map[string]string),
+				Kubeconfigs: kubeconfigs,
 			})
 			if err != nil {
 				e.Summary = fmt.Sprintf("Error while %s %s test", status.Running, name)
@@ -121,7 +123,9 @@ func (mesh *Mesh) ApplyOperation(ctx context.Context, opReq adapter.OperationReq
 }
 
 // ProcessOAM will handles the grpc invocation for handling OAM objects
-func (mesh *Mesh) ProcessOAM(ctx context.Context, oamReq adapter.OAMRequest) (string, error) {
+func (mesh *Mesh) ProcessOAM(ctx context.Context, oamReq adapter.OAMRequest, hchan *chan interface{}) (string, error) {
+	mesh.SetChannel(hchan)
+	kubeconfigs := oamReq.K8sConfigs
 	var comps []v1alpha1.Component
 	for _, acomp := range oamReq.OamComps {
 		comp, err := oam.ParseApplicationComponent(acomp)
@@ -141,13 +145,13 @@ func (mesh *Mesh) ProcessOAM(ctx context.Context, oamReq adapter.OAMRequest) (st
 	// If operation is delete then first HandleConfiguration and then handle the deployment
 	if oamReq.DeleteOp {
 		// Process configuration
-		msg2, err := mesh.HandleApplicationConfiguration(config, oamReq.DeleteOp)
+		msg2, err := mesh.HandleApplicationConfiguration(config, oamReq.DeleteOp, kubeconfigs)
 		if err != nil {
 			return msg2, ErrProcessOAM(err)
 		}
 
 		// Process components
-		msg1, err := mesh.HandleComponents(comps, oamReq.DeleteOp)
+		msg1, err := mesh.HandleComponents(comps, oamReq.DeleteOp, kubeconfigs)
 		if err != nil {
 			return msg1 + "\n" + msg2, ErrProcessOAM(err)
 		}
@@ -156,13 +160,13 @@ func (mesh *Mesh) ProcessOAM(ctx context.Context, oamReq adapter.OAMRequest) (st
 	}
 
 	// Process components
-	msg1, err := mesh.HandleComponents(comps, oamReq.DeleteOp)
+	msg1, err := mesh.HandleComponents(comps, oamReq.DeleteOp, kubeconfigs)
 	if err != nil {
 		return msg1, ErrProcessOAM(err)
 	}
 
 	// Process configuration
-	msg2, err := mesh.HandleApplicationConfiguration(config, oamReq.DeleteOp)
+	msg2, err := mesh.HandleApplicationConfiguration(config, oamReq.DeleteOp, kubeconfigs)
 	if err != nil {
 		return msg1 + "\n" + msg2, ErrProcessOAM(err)
 	}
