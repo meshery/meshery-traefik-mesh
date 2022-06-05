@@ -40,13 +40,16 @@ func (mesh *Mesh) installTraefikMesh(del bool, version, namespace string, kubeco
 func (mesh *Mesh) applyHelmChart(del bool, version, namespace string, kubeconfigs []string) error {
 	var wg sync.WaitGroup
 	var errs []error
+	var errMx sync.Mutex
 	for _, k8sconfig := range kubeconfigs {
 		wg.Add(1)
 		go func(k8sconfig string) {
 			defer wg.Done()
 			kClient, err := mesherykube.New([]byte(k8sconfig))
 			if err != nil {
+				errMx.Lock()
 				errs = append(errs, err)
+				errMx.Unlock()
 				return
 			}
 			repo := "https://helm.traefik.io/mesh"
@@ -68,7 +71,10 @@ func (mesh *Mesh) applyHelmChart(del bool, version, namespace string, kubeconfig
 				CreateNamespace: true,
 			})
 			if err != nil {
+				errMx.Lock()
 				errs = append(errs, err)
+				errMx.Unlock()
+				return
 			}
 		}(k8sconfig)
 	}

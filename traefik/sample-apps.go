@@ -29,13 +29,16 @@ func (mesh *Mesh) applyManifest(contents []byte, isDel bool, namespace string, k
 
 	var wg sync.WaitGroup
 	var errs []error
+	var errMx sync.Mutex
 	for _, k8sconfig := range kubeconfigs {
 		wg.Add(1)
 		go func(k8sconfig string) {
 			defer wg.Done()
 			kClient, err := mesherykube.New([]byte(k8sconfig))
 			if err != nil {
+				errMx.Lock()
 				errs = append(errs, err)
+				errMx.Unlock()
 				return
 			}
 			err = kClient.ApplyManifest(contents, mesherykube.ApplyOptions{
@@ -44,7 +47,10 @@ func (mesh *Mesh) applyManifest(contents []byte, isDel bool, namespace string, k
 				Delete:    isDel,
 			})
 			if err != nil {
+				errMx.Lock()
 				errs = append(errs, err)
+				errMx.Unlock()
+				return
 			}
 		}(k8sconfig)
 	}
