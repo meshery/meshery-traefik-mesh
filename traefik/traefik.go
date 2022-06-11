@@ -12,7 +12,9 @@ import (
 	"github.com/layer5io/meshery-traefik-mesh/traefik/oam"
 	meshkitCfg "github.com/layer5io/meshkit/config"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/models"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
+	"gopkg.in/yaml.v2"
 )
 
 const (
@@ -29,18 +31,68 @@ type Mesh struct {
 func New(c meshkitCfg.Handler, l logger.Handler, kc meshkitCfg.Handler) adapter.Handler {
 	return &Mesh{
 		Adapter: adapter.Adapter{
-			Config: c,
-			Log:    l,
+			Config:            c,
+			Log:               l,
+			KubeconfigHandler: kc,
 		},
 	}
 }
 
+//CreateKubeconfigs creates and writes passed kubeconfig onto the filesystem
+func (mesh *Mesh) CreateKubeconfigs(kubeconfigs []string) error {
+	var errs = make([]error, 0)
+	for _, kubeconfig := range kubeconfigs {
+		kconfig := models.Kubeconfig{}
+		err := yaml.Unmarshal([]byte(kubeconfig), &kconfig)
+		if err != nil {
+			errs = append(errs, err)
+			continue
+		}
+
+		// To have control over what exactly to take in on kubeconfig
+		mesh.KubeconfigHandler.SetKey("kind", kconfig.Kind)
+		mesh.KubeconfigHandler.SetKey("apiVersion", kconfig.APIVersion)
+		mesh.KubeconfigHandler.SetKey("current-context", kconfig.CurrentContext)
+		err = mesh.KubeconfigHandler.SetObject("preferences", kconfig.Preferences)
+		if err != nil {
+			errs = append(errs, err)
+			continue
+		}
+
+		err = mesh.KubeconfigHandler.SetObject("clusters", kconfig.Clusters)
+		if err != nil {
+			errs = append(errs, err)
+			continue
+		}
+
+		err = mesh.KubeconfigHandler.SetObject("users", kconfig.Users)
+		if err != nil {
+			errs = append(errs, err)
+			continue
+		}
+
+		err = mesh.KubeconfigHandler.SetObject("contexts", kconfig.Contexts)
+		if err != nil {
+			errs = append(errs, err)
+			continue
+		}
+	}
+	if len(errs) == 0 {
+		return nil
+	}
+	return mergeErrors(errs)
+}
+
 // ApplyOperation applies the operation on traefik mesh
 func (mesh *Mesh) ApplyOperation(ctx context.Context, opReq adapter.OperationRequest, hchan *chan interface{}) error {
+	err := mesh.CreateKubeconfigs(opReq.K8sConfigs)
+	if err != nil {
+		return err
+	}
 	mesh.SetChannel(hchan)
 	kubeconfigs := opReq.K8sConfigs
 	operations := make(adapter.Operations)
-	err := mesh.Config.GetObject(adapter.OperationsKey, &operations)
+	err = mesh.Config.GetObject(adapter.OperationsKey, &operations)
 	if err != nil {
 		return err
 	}
@@ -124,6 +176,10 @@ func (mesh *Mesh) ApplyOperation(ctx context.Context, opReq adapter.OperationReq
 
 // ProcessOAM will handles the grpc invocation for handling OAM objects
 func (mesh *Mesh) ProcessOAM(ctx context.Context, oamReq adapter.OAMRequest, hchan *chan interface{}) (string, error) {
+	err := mesh.CreateKubeconfigs(oamReq.K8sConfigs)
+	if err != nil {
+		return "", err
+	}
 	mesh.SetChannel(hchan)
 	kubeconfigs := oamReq.K8sConfigs
 	var comps []v1alpha1.Component
