@@ -15,9 +15,10 @@ docker-run:
 	-e DEBUG=true \
 	layer5/meshery-traefik-mesh
 
+## Build and run Adapter locally
 run:
-	go mod tidy; \
-	DEBUG=true go run main.go
+	go$(v) mod tidy -compat=1.17; \
+	DEBUG=true GOPROXY=direct GOSUMDB=off go run main.go
 
 run-force-dynamic-reg:
 	FORCE_DYNAMIC_REG=true DEBUG=true GOPROXY=direct GOSUMDB=off go run main.go
