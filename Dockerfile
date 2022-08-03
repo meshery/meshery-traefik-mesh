@@ -15,13 +15,12 @@ COPY internal/ internal/
 COPY traefik/ traefik/
 COPY build/ build/
 # Build
-RUN GOPROXY=https://proxy.golang.org,direct CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -ldflags="-w -s -X main.version=$VERSION -X main.gitsha=$GIT_COMMITSHA" -a -o meshery-traefik-mesh main.go
+RUN GOPROXY=https://proxy.golang.org,direct CGO_ENABLED=0 GOOS=linux GO111MODULE=on go build -ldflags="-w -s -X main.version=$VERSION -X main.gitsha=$GIT_COMMITSHA" -a -o meshery-traefik-mesh main.go
 
 # Use distroless as minimal base image to package the manager binary
 # Refer to https://github.com/GoogleContainerTools/distroless for more details
 FROM gcr.io/distroless/nodejs:14
 ENV DISTRO="debian"
-ENV GOARCH="amd64"
 ENV SERVICE_ADDR="meshery-traefik-mesh"
 ENV MESHERY_SERVER="http://meshery:9081"
 WORKDIR $HOME/.meshery
