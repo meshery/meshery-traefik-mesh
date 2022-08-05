@@ -67,11 +67,7 @@ func (mesh *Mesh) HandleApplicationConfiguration(config v1alpha1.Configuration, 
 }
 
 func handleComponentTraefikMesh(mesh *Mesh, comp v1alpha1.Component, isDel bool, kubeconfigs []string) (string, error) {
-	// Get the traefik version from the settings
-	// we are sure that the version of traefik would be present
-	// because the configuration is already validated against the schema
-	version := comp.Spec.Settings["version"].(string)
-
+	version := comp.Spec.Version
 	msg, err := mesh.installTraefikMesh(isDel, version, comp.Namespace, kubeconfigs)
 	if err != nil {
 		return fmt.Sprintf("%s: %s", comp.Name, msg), err
