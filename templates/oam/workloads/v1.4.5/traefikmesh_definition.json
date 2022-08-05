@@ -1,0 +1,15 @@
+{
+  "apiVersion": "core.oam.dev/v1alpha1",
+  "kind": "WorkloadDefinition",
+  "metadata": {
+    "name": "TraefikMesh"
+  },
+  "spec": {
+    "definitionRef": {
+      "name": "Traefikmesh.meshery.layer5.io"
+    },
+    "metadata":{
+      "version":"v1.4.5"
+    }
+  }
+}
