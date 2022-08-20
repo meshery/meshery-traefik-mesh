@@ -101,6 +101,8 @@ func (mesh *Mesh) ApplyOperation(ctx context.Context, opReq adapter.OperationReq
 		Operationid: opReq.OperationID,
 		Summary:     status.Deploying,
 		Details:     "Operation is not supported",
+		Component:   internalconfig.ServerConfig["type"],
+		ComponentName: internalconfig.ServerConfig["name"],
 	}
 
 	switch opReq.OperationName {
@@ -109,9 +111,8 @@ func (mesh *Mesh) ApplyOperation(ctx context.Context, opReq adapter.OperationReq
 			version := string(operations[opReq.OperationName].Versions[0])
 			stat, err := hh.installTraefikMesh(opReq.IsDeleteOperation, version, opReq.Namespace, kubeconfigs)
 			if err != nil {
-				e.Summary = fmt.Sprintf("Error while %s Traefik service mesh", stat)
-				e.Details = err.Error()
-				hh.StreamErr(e, err)
+				summary := fmt.Sprintf("Error while %s Traefik service mesh", stat)
+				hh.streamErr(summary, e, err)
 				return
 			}
 			ee.Summary = fmt.Sprintf("Traefik service mesh %s successfully", stat)
@@ -123,9 +124,8 @@ func (mesh *Mesh) ApplyOperation(ctx context.Context, opReq adapter.OperationReq
 			appName := operations[opReq.OperationName].AdditionalProperties[common.ServiceName]
 			stat, err := hh.installSampleApp(opReq.Namespace, opReq.IsDeleteOperation, operations[opReq.OperationName].Templates, kubeconfigs)
 			if err != nil {
-				e.Summary = fmt.Sprintf("Error while %s %s application", stat, appName)
-				e.Details = err.Error()
-				hh.StreamErr(e, err)
+				summary := fmt.Sprintf("Error while %s %s application", stat, appName)
+				hh.streamErr(summary, e, err)
 				return
 			}
 			ee.Summary = fmt.Sprintf("%s application %s successfully", appName, stat)
@@ -136,9 +136,8 @@ func (mesh *Mesh) ApplyOperation(ctx context.Context, opReq adapter.OperationReq
 		go func(hh *Mesh, ee *adapter.Event) {
 			stat, err := hh.applyCustomOperation(opReq.Namespace, opReq.CustomBody, opReq.IsDeleteOperation, kubeconfigs)
 			if err != nil {
-				e.Summary = fmt.Sprintf("Error while %s custom operation", stat)
-				e.Details = err.Error()
-				hh.StreamErr(e, err)
+				summary := fmt.Sprintf("Error while %s custom operation", stat)
+				hh.streamErr(summary, e, err)
 				return
 			}
 			ee.Summary = fmt.Sprintf("Manifest %s successfully", status.Deployed)
@@ -158,9 +157,8 @@ func (mesh *Mesh) ApplyOperation(ctx context.Context, opReq adapter.OperationReq
 				Kubeconfigs: kubeconfigs,
 			})
 			if err != nil {
-				e.Summary = fmt.Sprintf("Error while %s %s test", status.Running, name)
-				e.Details = err.Error()
-				hh.StreamErr(e, err)
+				summary := fmt.Sprintf("Error while %s %s test", status.Running, name)
+				hh.streamErr(summary, e, err)
 				return
 			}
 			ee.Summary = fmt.Sprintf("%s test %s successfully", name, status.Completed)
@@ -168,7 +166,7 @@ func (mesh *Mesh) ApplyOperation(ctx context.Context, opReq adapter.OperationReq
 			hh.StreamInfo(e)
 		}(mesh, e)
 	default:
-		mesh.StreamErr(e, ErrOpInvalid)
+		mesh.streamErr("Invalid operation", e, ErrOpInvalid)
 	}
 
 	return nil
@@ -228,4 +226,13 @@ func (mesh *Mesh) ProcessOAM(ctx context.Context, oamReq adapter.OAMRequest, hch
 	}
 
 	return msg1 + "\n" + msg2, nil
+}
+
+func(mesh *Mesh) streamErr(summary string, e *adapter.Event, err error) {
+	e.Summary = summary
+	e.Details = err.Error()
+	e.ErrorCode = errors.GetCode(err)
+	e.ProbableCause = errors.GetCause(err)
+	e.SuggestedRemediation = errors.GetRemedy(err)
+	mesh.StreamErr(e, err)
 }
