@@ -19,7 +19,7 @@ RUN GOPROXY=https://proxy.golang.org,direct CGO_ENABLED=0 GOOS=linux GO111MODULE
 
 # Use distroless as minimal base image to package the manager binary
 # Refer to https://github.com/GoogleContainerTools/distroless for more details
-FROM gcr.io/distroless/nodejs:14
+FROM gcr.io/distroless/nodejs:16
 ENV DISTRO="debian"
 ENV SERVICE_ADDR="meshery-traefik-mesh"
 ENV MESHERY_SERVER="http://meshery:9081"
