@@ -16,6 +16,7 @@ import (
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
+	"github.com/layer5io/meshkit/utils/events"
 	"gopkg.in/yaml.v2"
 )
 
@@ -30,12 +31,13 @@ type Mesh struct {
 }
 
 // New initializes treafik-mesh handler.
-func New(c meshkitCfg.Handler, l logger.Handler, kc meshkitCfg.Handler) adapter.Handler {
+func New(c meshkitCfg.Handler, l logger.Handler, kc meshkitCfg.Handler, e *events.EventStreamer) adapter.Handler {
 	return &Mesh{
 		Adapter: adapter.Adapter{
 			Config:            c,
 			Log:               l,
 			KubeconfigHandler: kc,
+			EventStreamer:     e,
 		},
 	}
 }
@@ -86,12 +88,11 @@ func (mesh *Mesh) CreateKubeconfigs(kubeconfigs []string) error {
 }
 
 // ApplyOperation applies the operation on traefik mesh
-func (mesh *Mesh) ApplyOperation(ctx context.Context, opReq adapter.OperationRequest, hchan *chan interface{}) error {
+func (mesh *Mesh) ApplyOperation(ctx context.Context, opReq adapter.OperationRequest) error {
 	err := mesh.CreateKubeconfigs(opReq.K8sConfigs)
 	if err != nil {
 		return err
 	}
-	mesh.SetChannel(hchan)
 	kubeconfigs := opReq.K8sConfigs
 	operations := make(adapter.Operations)
 	err = mesh.Config.GetObject(adapter.OperationsKey, &operations)
@@ -100,10 +101,10 @@ func (mesh *Mesh) ApplyOperation(ctx context.Context, opReq adapter.OperationReq
 	}
 
 	e := &meshes.EventsResponse{
-		OperationId: opReq.OperationID,
-		Summary:     status.Deploying,
-		Details:     "Operation is not supported",
-		Component:   internalconfig.ServerConfig["type"],
+		OperationId:   opReq.OperationID,
+		Summary:       status.Deploying,
+		Details:       "Operation is not supported",
+		Component:     internalconfig.ServerConfig["type"],
 		ComponentName: internalconfig.ServerConfig["name"],
 	}
 
@@ -114,12 +115,12 @@ func (mesh *Mesh) ApplyOperation(ctx context.Context, opReq adapter.OperationReq
 			stat, err := hh.installTraefikMesh(opReq.IsDeleteOperation, version, opReq.Namespace, kubeconfigs)
 			if err != nil {
 				summary := fmt.Sprintf("Error while %s Traefik service mesh", stat)
-				hh.streamErr(summary, e, err)
+				hh.streamErr(summary, ee, err)
 				return
 			}
 			ee.Summary = fmt.Sprintf("Traefik service mesh %s successfully", stat)
 			ee.Details = fmt.Sprintf("The Traefik service mesh is now %s.", stat)
-			hh.StreamInfo(e)
+			hh.StreamInfo(ee)
 		}(mesh, e)
 	case common.BookInfoOperation, common.HTTPBinOperation, common.ImageHubOperation, common.EmojiVotoOperation:
 		go func(hh *Mesh, ee *meshes.EventsResponse) {
@@ -127,24 +128,24 @@ func (mesh *Mesh) ApplyOperation(ctx context.Context, opReq adapter.OperationReq
 			stat, err := hh.installSampleApp(opReq.Namespace, opReq.IsDeleteOperation, operations[opReq.OperationName].Templates, kubeconfigs)
 			if err != nil {
 				summary := fmt.Sprintf("Error while %s %s application", stat, appName)
-				hh.streamErr(summary, e, err)
+				hh.streamErr(summary, ee, err)
 				return
 			}
 			ee.Summary = fmt.Sprintf("%s application %s successfully", appName, stat)
 			ee.Details = fmt.Sprintf("The %s application is now %s.", appName, stat)
-			hh.StreamInfo(e)
+			hh.StreamInfo(ee)
 		}(mesh, e)
 	case common.CustomOperation:
 		go func(hh *Mesh, ee *meshes.EventsResponse) {
 			stat, err := hh.applyCustomOperation(opReq.Namespace, opReq.CustomBody, opReq.IsDeleteOperation, kubeconfigs)
 			if err != nil {
 				summary := fmt.Sprintf("Error while %s custom operation", stat)
-				hh.streamErr(summary, e, err)
+				hh.streamErr(summary, ee, err)
 				return
 			}
 			ee.Summary = fmt.Sprintf("Manifest %s successfully", status.Deployed)
 			ee.Details = ""
-			hh.StreamInfo(e)
+			hh.StreamInfo(ee)
 		}(mesh, e)
 	case common.SmiConformanceOperation:
 		go func(hh *Mesh, ee *meshes.EventsResponse) {
@@ -160,12 +161,12 @@ func (mesh *Mesh) ApplyOperation(ctx context.Context, opReq adapter.OperationReq
 			})
 			if err != nil {
 				summary := fmt.Sprintf("Error while %s %s test", status.Running, name)
-				hh.streamErr(summary, e, err)
+				hh.streamErr(summary, ee, err)
 				return
 			}
 			ee.Summary = fmt.Sprintf("%s test %s successfully", name, status.Completed)
 			ee.Details = ""
-			hh.StreamInfo(e)
+			hh.StreamInfo(ee)
 		}(mesh, e)
 	default:
 		mesh.streamErr("Invalid operation", e, ErrOpInvalid)
@@ -175,12 +176,11 @@ func (mesh *Mesh) ApplyOperation(ctx context.Context, opReq adapter.OperationReq
 }
 
 // ProcessOAM will handles the grpc invocation for handling OAM objects
-func (mesh *Mesh) ProcessOAM(ctx context.Context, oamReq adapter.OAMRequest, hchan *chan interface{}) (string, error) {
+func (mesh *Mesh) ProcessOAM(ctx context.Context, oamReq adapter.OAMRequest) (string, error) {
 	err := mesh.CreateKubeconfigs(oamReq.K8sConfigs)
 	if err != nil {
 		return "", err
 	}
-	mesh.SetChannel(hchan)
 	kubeconfigs := oamReq.K8sConfigs
 	var comps []v1alpha1.Component
 	for _, acomp := range oamReq.OamComps {
@@ -230,7 +230,7 @@ func (mesh *Mesh) ProcessOAM(ctx context.Context, oamReq adapter.OAMRequest, hch
 	return msg1 + "\n" + msg2, nil
 }
 
-func(mesh *Mesh) streamErr(summary string, e *meshes.EventsResponse, err error) {
+func (mesh *Mesh) streamErr(summary string, e *meshes.EventsResponse, err error) {
 	e.Summary = summary
 	e.Details = err.Error()
 	e.ErrorCode = errors.GetCode(err)
