@@ -20,7 +20,7 @@ var WorkloadPath string
 var AllVersions []string
 var CRDNames []string
 
-//NewConfig creates the configuration for creating components
+// NewConfig creates the configuration for creating components
 func NewConfig(version string) manifests.Config {
 	return manifests.Config{
 		Name:        smp.ServiceMesh_Type_name[int32(smp.ServiceMesh_TRAEFIK_MESH)],
