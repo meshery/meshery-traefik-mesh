@@ -79,7 +79,7 @@ linters:
     # - deadcode
     - dogsled
     # - dupl
-    - errcheck
+    # - errcheck
     # - exhaustive
     # - funlen
     # - goconst
