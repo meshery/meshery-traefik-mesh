@@ -26,7 +26,6 @@ func (mesh *Mesh) installSampleApp(namespace string, del bool, templates []adapt
 }
 
 func (mesh *Mesh) applyManifest(contents []byte, isDel bool, namespace string, kubeconfigs []string) error {
-
 	var wg sync.WaitGroup
 	var errs []error
 	var errMx sync.Mutex

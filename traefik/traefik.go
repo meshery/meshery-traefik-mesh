@@ -42,7 +42,7 @@ func New(c meshkitCfg.Handler, l logger.Handler, kc meshkitCfg.Handler, e *event
 	}
 }
 
-//CreateKubeconfigs creates and writes passed kubeconfig onto the filesystem
+// CreateKubeconfigs creates and writes passed kubeconfig onto the filesystem
 func (mesh *Mesh) CreateKubeconfigs(kubeconfigs []string) error {
 	var errs = make([]error, 0)
 	for _, kubeconfig := range kubeconfigs {

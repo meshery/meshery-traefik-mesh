@@ -170,11 +170,9 @@ func registerDynamicCapabilities(port string, log logger.Handler) {
 		<-ticker.C
 		registerWorkloads(port, log)
 	}
-
 }
 
 func registerWorkloads(port string, log logger.Handler) {
-
 	version := build.DefaultVersion
 	url := build.DefaultURL
 	gm := build.DefaultGenerationMethod
