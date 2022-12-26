@@ -22,6 +22,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/layer5io/meshery-traefik-mesh/traefik"
 	"github.com/layer5io/meshery-traefik-mesh/traefik/oam"
 	"github.com/layer5io/meshkit/logger"
@@ -39,6 +40,7 @@ var (
 	serviceName = "traefik-mesh-adapter"
 	version     = "edge"
 	gitsha      = "none"
+	instanceID  = uuid.NewString()
 )
 
 func init() {
@@ -160,6 +162,11 @@ func registerCapabilities(port string, log logger.Handler) {
 	if err := oam.RegisterTraits(mesheryServerAddress(), serviceAddress()+":"+port); err != nil {
 		log.Info(err.Error())
 	}
+
+	// Register meshmodel components
+	if err := oam.RegisterMeshModelComponents(instanceID, mesheryServerAddress(), serviceAddress(), port); err != nil {
+		log.Error(err)
+	}
 }
 func registerDynamicCapabilities(port string, log logger.Handler) {
 	registerWorkloads(port, log)
@@ -195,11 +202,13 @@ func registerWorkloads(port string, log logger.Handler) {
 		crdurl := url + crd
 		log.Info("Registering ", crdurl)
 		if err := adapter.CreateComponents(adapter.StaticCompConfig{
-			URL:     crdurl,
-			Method:  gm,
-			Path:    build.WorkloadPath,
-			DirName: version,
-			Config:  build.NewConfig(version),
+			URL:             crdurl,
+			Method:          gm,
+			OAMPath:         build.WorkloadPath,
+			MeshModelPath:   build.MeshModelPath,
+			MeshModelConfig: build.MeshModelConfig,
+			DirName:         version,
+			Config:          build.NewConfig(version),
 		}); err != nil {
 			log.Info(err.Error())
 			return
