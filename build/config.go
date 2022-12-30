@@ -71,14 +71,14 @@ func init() {
 	DefaultGenerationMethod = adapter.Manifests
 
 	//Get all the crd names
-	w := walker.NewGithub()
+	w := walker.NewGit()
 	err := w.Owner("traefik").
 		Repo("mesh-helm-chart").
 		Branch("master").
 		Root("mesh/crds/**").
-		RegisterFileInterceptor(func(gca walker.GithubContentAPI) error {
-			if gca.Content != "" {
-				CRDNames = append(CRDNames, gca.Name)
+		RegisterFileInterceptor(func(file walker.File) error {
+			if file.Content != "" {
+				CRDNames = append(CRDNames, file.Name)
 			}
 			return nil
 		}).Walk()
