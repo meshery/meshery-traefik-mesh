@@ -18,7 +18,7 @@
         "version": "v1.4.8",
         "displayName": "TRAEFIK_MESH",
         "category": {
-			"name": "Orchestration \u0026 Management",
+			"name": "Cloud Native Network",
 			"metadata": null
 		},
         "subCategory": "Service Mesh"
