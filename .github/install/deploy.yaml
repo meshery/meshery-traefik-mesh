@@ -2,6 +2,8 @@ name: TraefikMesh
 services:
   traefik:
     type: TraefikMesh
+    model: TRAEFIK_MESH
+    apiVersion: core.meshmodel.dev/v1alpha1
     namespace: traefik
     version:  #will be inserted dynamically
 
