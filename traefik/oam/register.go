@@ -14,18 +14,11 @@ import (
 var (
 	basePath, _         = os.Getwd()
 	MeshmodelComponents = filepath.Join(basePath, "templates", "meshmodel", "components")
-	pathSets            = []schemaDefinitionPathSet{}
 )
 
 // AvailableVersions denote the component versions available statically
 var AvailableVersions = map[string]bool{}
 var availableVersionGlobalMutex sync.Mutex
-
-type schemaDefinitionPathSet struct {
-	oamDefinitionPath string
-	jsonSchemaPath    string
-	name              string
-}
 
 type meshmodelDefinitionPathSet struct {
 	meshmodelDefinitionPath string
