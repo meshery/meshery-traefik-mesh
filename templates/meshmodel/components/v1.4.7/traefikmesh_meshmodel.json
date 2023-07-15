@@ -14,9 +14,9 @@
 	"model": {
 		"name": "TRAEFIK_MESH",
 		"version": "v1.4.7",
-		"displayName": "TRAEFIK_MESH",
+		"displayName": "Traefik Mesh",
 		"category": {
-			"name": "Orchestration \u0026 Management",
+			"name": "Cloud Native Network",
 			"metadata": null
 		},
 		"subCategory": "Service Mesh",
