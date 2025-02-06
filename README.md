@@ -1,4 +1,4 @@
-<p style="text-align:center;" align="center"><a href="https://layer5.io/meshery"><picture align="center">
+<p style="text-align:center;" align="center"><a href="https://meshery.io/"><picture align="center">
   <source media="(prefers-color-scheme: dark)" srcset="img/readme/meshery-logo-dark-text-side.svg"  width="70%" align="center" style="margin-bottom:20px;">
   <source media="(prefers-color-scheme: light)" srcset="img/readme/meshery-logo-light-text-side.svg" width="70%" align="center" style="margin-bottom:20px;">
   <img alt="Shows an illustrated light mode meshery logo in light color mode and a dark mode meshery logo dark color mode." src="img/readme/meshery-logo-dark-text-side.svg" width="70%" align="center" style="margin-bottom:20px;">
